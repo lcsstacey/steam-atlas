@@ -1,0 +1,387 @@
+@import "tailwindcss";
+
+:root {
+  /* Surface — deep blue-black with subtle teal undertone (Steam Deck OS-inspired) */
+  --background: #07101a;
+  --foreground: #e6eef7;
+  --surface: rgba(16, 25, 36, 0.72);
+  --surface-strong: rgba(20, 31, 44, 0.92);
+  --surface-soft: rgba(180, 210, 240, 0.04);
+  --line: rgba(180, 210, 240, 0.08);
+  --line-strong: rgba(180, 210, 240, 0.14);
+  --muted: #7a8a9c;
+  --muted-strong: #aab8c8;
+
+  /* Brand — Steam blue family, refined for modern UI */
+  --brand: #5db8ff;
+  --brand-soft: #a3d9ff;
+  --brand-deep: #2a87d4;
+
+  /* Accents */
+  --ember: #ff8a5c;        /* warm coral, used sparingly for "hot" signals */
+  --citrine: #a3e635;      /* lime-green, used for "active/positive" */
+  --violet: #9a8cff;       /* preserved for variety */
+
+  --shadow-soft: 0 1px 0 rgba(180, 210, 240, 0.05) inset, 0 24px 60px -32px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 1px 0 rgba(180, 210, 240, 0.06) inset, 0 18px 44px -28px rgba(0, 0, 0, 0.65);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body-family);
+  --font-display: var(--font-display-family);
+  --font-mono: var(--font-mono-family);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--background);
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(80rem 50rem at 12% -10%, rgba(93, 184, 255, 0.08), transparent 60%),
+    radial-gradient(60rem 50rem at 92% 8%, rgba(255, 138, 92, 0.05), transparent 65%),
+    radial-gradient(70rem 60rem at 60% 110%, rgba(154, 140, 255, 0.05), transparent 70%),
+    linear-gradient(180deg, #07101a 0%, #0a1421 55%, #050a11 100%);
+  color: var(--foreground);
+  font-family: var(--font-body-family), -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
+  font-feature-settings: "ss01" 1, "ss02" 1, "cv11" 1;
+  font-synthesis-weight: none;
+  font-weight: 420;
+  letter-spacing: -0.005em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display-family), var(--font-body-family), sans-serif;
+  font-feature-settings: "ss01" 1, "ss02" 1, "cv11" 1;
+  letter-spacing: -0.018em;
+  font-weight: 600;
+}
+
+h1 { letter-spacing: -0.024em; }
+
+.font-body {
+  font-family: var(--font-body-family), sans-serif;
+}
+
+.mono-label {
+  font-family: var(--font-mono-family), ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: 0.04em;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(93, 184, 255, 0.32);
+  color: #07101a;
+}
+
+/* ────────── Surfaces ────────── */
+
+.glass-panel {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(180, 210, 240, 0.025), rgba(180, 210, 240, 0) 40%),
+    var(--surface);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(180, 210, 240, 0.06), transparent 28%);
+  opacity: 0.6;
+}
+
+/* legacy alias — no longer applies clip-path. Just rounds corners. */
+.premium-surface {
+  border-radius: var(--radius-lg);
+}
+
+/* ────────── Glow ring (used for hero/highlight surfaces) ────────── */
+
+.premium-ring {
+  position: relative;
+}
+
+.premium-ring::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(93, 184, 255, 0.45), rgba(255, 138, 92, 0.2) 50%, rgba(154, 140, 255, 0.22));
+  opacity: 0.32;
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+/* ────────── Controls ────────── */
+
+.premium-control {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display-family), var(--font-body-family), sans-serif;
+  font-weight: 540;
+  letter-spacing: -0.005em;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 220ms ease, transform 180ms ease;
+  transform: translateZ(0);
+}
+
+.premium-control:focus-visible {
+  outline: 2px solid rgba(93, 184, 255, 0.7);
+  outline-offset: 2px;
+}
+
+.primary-control,
+.active-control {
+  color: #06121f !important;
+  background:
+    linear-gradient(180deg, #b6dfff 0%, #5db8ff 60%, #2a87d4 100%) !important;
+  border-color: rgba(182, 223, 255, 0.7) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(20, 60, 110, 0.22),
+    0 8px 22px -8px rgba(93, 184, 255, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.35) !important;
+  text-shadow: none;
+}
+
+.primary-control:hover,
+.active-control:hover {
+  background:
+    linear-gradient(180deg, #c4e5ff 0%, #6ec0ff 60%, #338fdc 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(20, 60, 110, 0.22),
+    0 10px 26px -8px rgba(93, 184, 255, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.35) !important;
+}
+
+.primary-control:active,
+.active-control:active {
+  transform: translateY(1px);
+}
+
+.primary-control svg,
+.active-control svg,
+.active-control span {
+  color: inherit !important;
+}
+
+/* ────────── Cards (game art) ────────── */
+
+.game-card-shell {
+  position: relative;
+  border-radius: var(--radius-lg);
+}
+
+.game-card-art {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  overflow: hidden;
+}
+
+/* ────────── Icon "crystal" — refined to a clean tinted square ────────── */
+
+.icon-crystal {
+  --signal-a: var(--brand);
+  --signal-b: var(--ember);
+  --signal-c: var(--citrine);
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--signal-a) 26%, transparent);
+  background:
+    radial-gradient(circle at 30% 22%, color-mix(in srgb, var(--signal-a) 22%, transparent), transparent 60%),
+    linear-gradient(160deg, rgba(180, 210, 240, 0.06), rgba(180, 210, 240, 0.02));
+  box-shadow:
+    inset 0 1px 0 rgba(180, 210, 240, 0.12),
+    0 4px 14px -6px color-mix(in srgb, var(--signal-a) 28%, transparent);
+  color: var(--foreground);
+}
+
+.icon-crystal svg {
+  color: color-mix(in srgb, var(--signal-a) 88%, white);
+}
+
+/* ────────── Signal meter (clean bar, no scanlines) ────────── */
+
+.signal-rail {
+  --signal-a: var(--brand);
+  --signal-b: var(--ember);
+  --signal-c: var(--citrine);
+  position: relative;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(180, 210, 240, 0.06);
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.signal-fill {
+  position: relative;
+  height: 100%;
+  min-width: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--signal-a), color-mix(in srgb, var(--signal-b) 70%, var(--signal-a)));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--signal-a) 35%, transparent),
+    0 0 18px -2px color-mix(in srgb, var(--signal-a) 50%, transparent);
+}
+
+.signal-stack {
+  display: grid;
+  gap: 4px;
+}
+
+/* ────────── Micro bars (mini sparklines) ────────── */
+
+.micro-bars {
+  align-items: end;
+  display: flex;
+  gap: 3px;
+  height: 26px;
+}
+
+.micro-bars span {
+  background: linear-gradient(180deg, var(--signal-c, #c4e5ff), var(--signal-a, #5db8ff) 60%, var(--signal-b, #ff8a5c));
+  border-radius: 1.5px;
+  flex: 1;
+  min-width: 3px;
+  opacity: 0.78;
+}
+
+/* ────────── Ambient layers (quieted) ────────── */
+
+.animated-sheen {
+  /* deliberately a no-op — kept for backward compat with existing markup */
+  position: relative;
+}
+
+.ambient-grid {
+  background-image:
+    linear-gradient(rgba(180, 210, 240, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(180, 210, 240, 0.03) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.aurora-field {
+  position: fixed;
+  inset: -10%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.22;
+  filter: blur(60px);
+  background:
+    radial-gradient(40rem 30rem at 18% 22%, rgba(93, 184, 255, 0.55), transparent 70%),
+    radial-gradient(36rem 30rem at 84% 12%, rgba(255, 138, 92, 0.3), transparent 70%),
+    radial-gradient(40rem 36rem at 60% 88%, rgba(154, 140, 255, 0.32), transparent 70%);
+  animation: aurora-drift 32s ease-in-out infinite alternate;
+}
+
+.spatial-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ────────── Subtle hover lift utility ────────── */
+
+.lift-on-hover {
+  transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 280ms ease, border-color 280ms ease;
+}
+
+.lift-on-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* ────────── Animations ────────── */
+
+@keyframes aurora-drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to { transform: translate3d(2%, 1.5%, 0) scale(1.04); }
+}
+
+@keyframes signal-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+.shimmer-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(180, 210, 240, 0.08), transparent);
+  animation: shimmer 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ────────── Reduced motion ────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

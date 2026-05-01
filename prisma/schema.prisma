@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum ManualGameStatus {
+  INSTALLED
+  WANT_TO_INSTALL
+  PLAY_NEXT
+  FINISHED
+  DROPPED
+  NOT_INTERESTED
+}
+
+enum RecommendationMode {
+  PLAY_SOMETHING_SIMILAR
+  BACKLOG_GEM
+  COMFORT_PICK
+  WILDCARD
+  SHORT_SESSION
+  DEEP_DIVE
+  RETRY_THIS
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  steamId             String    @unique
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  lastLibraryImportAt DateTime?
+
+  steamProfile    SteamProfile?
+  userGames       UserGame[]
+  recommendations Recommendation[]
+}
+
+model SteamProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  steamId         String   @unique
+  displayName     String
+  avatarUrl       String?
+  avatarMediumUrl String?
+  avatarFullUrl   String?
+  profileUrl      String?
+  visibilityState Int?
+  personaState    Int?
+  lastSyncedAt    DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Game {
+  id        String   @id @default(cuid())
+  appId     Int      @unique
+  name      String
+  iconHash  String?
+  iconUrl   String?
+  headerUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userGames       UserGame[]
+  metadata        GameMetadata?
+  recommendations Recommendation[]
+}
+
+model UserGame {
+  id                      String    @id @default(cuid())
+  userId                  String
+  gameId                  String
+  playtimeForeverMinutes  Int       @default(0)
+  playtimeTwoWeeksMinutes Int       @default(0)
+  playtimeWindowsMinutes  Int?
+  playtimeMacMinutes      Int?
+  playtimeLinuxMinutes    Int?
+  lastPlayedAt            DateTime?
+  importedAt              DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game   Game            @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  status UserGameStatus?
+
+  @@unique([userId, gameId])
+  @@index([userId, playtimeForeverMinutes])
+  @@index([userId, lastPlayedAt])
+}
+
+model GameMetadata {
+  id         String   @id @default(cuid())
+  gameId     String   @unique
+  source     String   @default("steam")
+  genres     Json?
+  categories Json?
+  tags       Json?
+  fetchedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model UserGameStatus {
+  id         String           @id @default(cuid())
+  userGameId String           @unique
+  status     ManualGameStatus
+  note       String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  userGame UserGame @relation(fields: [userGameId], references: [id], onDelete: Cascade)
+}
+
+model Recommendation {
+  id          String             @id @default(cuid())
+  userId      String
+  gameId      String
+  mode        RecommendationMode
+  score       Float
+  reason      String
+  createdAt   DateTime           @default(now())
+  acceptedAt  DateTime?
+  dismissedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@index([userId, mode, createdAt])
+}
