@@ -19,7 +19,7 @@ export function SearchCommandMenu({
         value={value}
       />
       <span className="hidden rounded-[8px] border border-[var(--line)] bg-white/[0.04] px-2 py-1 text-[11px] font-medium text-[var(--muted)] sm:inline">
-        �O~ K
+        ⌘ K
       </span>
     </label>
   );
