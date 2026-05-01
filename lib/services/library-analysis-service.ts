@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { getTagsForUserGames } from "@/lib/services/custom-tags-service";
+import type { DeckCompat } from "@/app/generated/prisma/enums";
 import type {
   DashboardSummary,
   LibraryCategory,
@@ -13,11 +15,16 @@ type UserGameWithRelations = {
   playtimeForeverMinutes: number;
   playtimeTwoWeeksMinutes: number;
   lastPlayedAt: Date | null;
+  achievementsUnlocked: number | null;
+  achievementsTotal: number | null;
   game: {
     appId: number;
     name: string;
     iconUrl: string | null;
     headerUrl: string | null;
+    deckCompat: DeckCompat;
+    currentPlayers: number | null;
+    hltbMainMinutes: number | null;
     metadata: {
       genres: unknown;
       categories: unknown;
@@ -29,18 +36,23 @@ type UserGameWithRelations = {
   } | null;
 };
 
+type CustomTagMap = Map<string, Array<{ id: string; label: string; color: string | null }>>;
+
 export class LibraryAnalysisService {
   async getLibrary(userId: string) {
-    const userGames = await prisma.userGame.findMany({
-      where: { userId },
-      include: {
-        game: { include: { metadata: true } },
-        status: true,
-      },
-      orderBy: [{ playtimeForeverMinutes: "desc" }, { updatedAt: "desc" }],
-    });
+    const [userGames, tagsByUserGameId] = await Promise.all([
+      prisma.userGame.findMany({
+        where: { userId },
+        include: {
+          game: { include: { metadata: true } },
+          status: true,
+        },
+        orderBy: [{ playtimeForeverMinutes: "desc" }, { updatedAt: "desc" }],
+      }),
+      getTagsForUserGames(userId),
+    ]);
 
-    return userGames.map(toLibraryGame);
+    return userGames.map((row) => toLibraryGame(row, tagsByUserGameId));
   }
 
   async getDashboard(user: SessionUser): Promise<DashboardSummary> {
@@ -65,6 +77,8 @@ export class LibraryAnalysisService {
     const backlogGems = getBacklogGems(games);
     const tasteSignals = getTasteSignals(games);
     const categories = buildCategories(games);
+    const recentlyDropped = getRecentlyDropped(games);
+    const phaseTimeline = buildPhaseTimeline(games);
 
     return {
       user,
@@ -80,6 +94,7 @@ export class LibraryAnalysisService {
       topPlayed,
       recentlyPlayed,
       backlogGems,
+      recentlyDropped,
       categories,
       tasteSignals,
       playtimeChart: topPlayed.slice(0, 8).map((game) => ({
@@ -95,11 +110,15 @@ export class LibraryAnalysisService {
         { name: "20+ hours", value: games.filter((game) => game.playtimeMinutes >= 1200).length },
       ].filter((bucket) => bucket.value > 0),
       timeline: buildTimeline(games),
+      phaseTimeline,
     };
   }
 }
 
-function toLibraryGame(userGame: UserGameWithRelations): LibraryGame {
+function toLibraryGame(
+  userGame: UserGameWithRelations,
+  tagsByUserGameId: CustomTagMap,
+): LibraryGame {
   const metadata = userGame.game.metadata;
 
   return {
@@ -115,6 +134,12 @@ function toLibraryGame(userGame: UserGameWithRelations): LibraryGame {
     genres: labelsFromJson(metadata?.genres),
     categories: labelsFromJson(metadata?.categories),
     tags: labelsFromJson(metadata?.tags),
+    deckCompat: userGame.game.deckCompat,
+    currentPlayers: userGame.game.currentPlayers,
+    achievementsUnlocked: userGame.achievementsUnlocked,
+    achievementsTotal: userGame.achievementsTotal,
+    hltbMainMinutes: userGame.game.hltbMainMinutes,
+    customTags: tagsByUserGameId.get(userGame.id) ?? [],
   };
 }
 
@@ -321,6 +346,92 @@ function buildTimeline(games: LibraryGame[]) {
   return [...buckets.entries()]
     .map(([label, value]) => ({ label, value }))
     .slice(-12);
+}
+
+/**
+ * Phase Timeline: stacked area data showing how the user's genre mix changed
+ * over time. Buckets games by `lastPlayedAt` quarter, then ranks the top
+ * genres globally and produces one row per quarter with each genre's count.
+ */
+export function buildPhaseTimeline(games: LibraryGame[], maxGenres = 5) {
+  type Bucket = { quarter: string; ts: number; genres: Map<string, number> };
+  const byQuarter = new Map<string, Bucket>();
+
+  for (const game of games) {
+    if (!game.lastPlayedAt) continue;
+    const date = new Date(game.lastPlayedAt);
+    const year = date.getUTCFullYear();
+    const q = Math.floor(date.getUTCMonth() / 3) + 1;
+    const key = `${year}-Q${q}`;
+    let bucket = byQuarter.get(key);
+    if (!bucket) {
+      bucket = {
+        quarter: key,
+        ts: Date.UTC(year, (q - 1) * 3, 1),
+        genres: new Map(),
+      };
+      byQuarter.set(key, bucket);
+    }
+    const tags = game.genres.length > 0 ? game.genres : game.categories;
+    if (tags.length === 0) continue;
+    for (const tag of tags) {
+      bucket.genres.set(tag, (bucket.genres.get(tag) ?? 0) + 1);
+    }
+  }
+
+  // Pick the top N genres by overall count.
+  const totals = new Map<string, number>();
+  for (const bucket of byQuarter.values()) {
+    for (const [genre, count] of bucket.genres) {
+      totals.set(genre, (totals.get(genre) ?? 0) + count);
+    }
+  }
+  const topGenres = [...totals.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, maxGenres)
+    .map(([genre]) => genre);
+
+  const series = [...byQuarter.values()]
+    .sort((a, b) => a.ts - b.ts)
+    .map((bucket) => {
+      const row: Record<string, string | number> = { quarter: bucket.quarter };
+      for (const genre of topGenres) row[genre] = bucket.genres.get(genre) ?? 0;
+      return row;
+    });
+
+  return { topGenres, series };
+}
+
+/**
+ * Recently-Dropped: games you started in the last few months, played for a
+ * meaningful chunk, then stopped touching. The "fell off the wagon" pile.
+ */
+export function getRecentlyDropped(games: LibraryGame[], limit = 8) {
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
+
+  return games
+    .map((game) => {
+      const lastPlayed = game.lastPlayedAt ? new Date(game.lastPlayedAt).getTime() : null;
+      if (!lastPlayed) return null;
+      const daysAgo = (now - lastPlayed) / dayMs;
+      if (daysAgo < 14 || daysAgo > 90) return null;
+      // Played for at least 1 hour but fewer than 30 — i.e. a real start, not a finish
+      if (game.playtimeMinutes < 60 || game.playtimeMinutes > 1800) return null;
+      if (game.playtimeTwoWeeksMinutes > 0) return null;
+      if (game.manualStatus === "FINISHED" || game.manualStatus === "NOT_INTERESTED") return null;
+
+      const score =
+        Math.min(20, game.playtimeMinutes / 60) +
+        Math.max(0, 60 - daysAgo) / 6;
+
+      return { game, score, daysAgo: Math.round(daysAgo) };
+    })
+    .filter((entry): entry is { game: LibraryGame; score: number; daysAgo: number } =>
+      Boolean(entry),
+    )
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
 }
 
 export const libraryAnalysisService = new LibraryAnalysisService();

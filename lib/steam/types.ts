@@ -33,4 +33,56 @@ export type SteamStoreMetadata = {
   genres: string[];
   categories: string[];
   tags: string[];
+  /**
+   * Steam Deck verified status, when the storefront returns it.
+   * "verified" | "playable" | "unsupported" | "unknown"
+   */
+  deckCompat: "verified" | "playable" | "unsupported" | "unknown";
+};
+
+export type SteamFriend = {
+  steamid: string;
+  relationship?: string;
+  friend_since?: number;
+};
+
+export type SteamGameSchema = {
+  game?: {
+    gameName?: string;
+    availableGameStats?: {
+      achievements?: Array<{
+        name: string;
+        displayName?: string;
+        description?: string;
+        icon?: string;
+        icongray?: string;
+        hidden?: 0 | 1;
+      }>;
+    };
+  };
+};
+
+export type SteamPlayerAchievement = {
+  apiname: string;
+  achieved: 0 | 1;
+  unlocktime?: number;
+  name?: string;
+  description?: string;
+};
+
+export type SteamPlayerAchievementsResponse = {
+  playerstats?: {
+    steamID?: string;
+    gameName?: string;
+    success?: boolean;
+    error?: string;
+    achievements?: SteamPlayerAchievement[];
+  };
+};
+
+export type SteamWishlistItem = {
+  appid: number;
+  name: string;
+  priority?: number;
+  capsule?: string;
 };

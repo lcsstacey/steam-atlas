@@ -50,6 +50,11 @@ export const RECOMMENDATION_MODES: Array<{
     label: "Retry this",
     description: "Brief first attempts that still look aligned with your actual taste.",
   },
+  {
+    mode: "RECENTLY_DROPPED",
+    label: "Recently dropped",
+    description: "Games you started in the last few months and quietly walked away from.",
+  },
 ];
 
 export class RecommendationService {
@@ -196,6 +201,17 @@ export function scoreGame(
     score += retryWindow + (daysSince(game.lastPlayedAt) > 60 ? 0.2 : 0);
   }
 
+  if (mode === "RECENTLY_DROPPED") {
+    const days = daysSince(game.lastPlayedAt);
+    const inWindow = Number.isFinite(days) && days >= 14 && days <= 90;
+    const meaningfulPlay = game.playtimeMinutes >= 60 && game.playtimeMinutes <= 1800;
+    if (inWindow && meaningfulPlay) {
+      score += 0.65 + Math.min(0.2, game.playtimeMinutes / 1800);
+    } else {
+      score -= 0.4;
+    }
+  }
+
   return Number(clamp(score, 0, 1.5).toFixed(4));
 }
 
@@ -278,6 +294,9 @@ function explainRecommendation(game: LibraryGame, profile: TasteProfile, mode: R
   }
   if (mode === "RETRY_THIS") {
     return `Give ${game.name} one clean retry. You barely tested it, but it still overlaps with ${taste}, which makes it feel more like unfinished business than a bad fit.`;
+  }
+  if (mode === "RECENTLY_DROPPED") {
+    return `${game.name} got real time from you and then went quiet. You're already a few hours in, the ${taste} signal still tracks, and resuming costs less than starting something new.`;
   }
 
   return `Try ${game.name} because it sits close to the games that earned your longest sessions. ${anchor} It looks familiar enough to land, but neglected enough to feel fresh.`;

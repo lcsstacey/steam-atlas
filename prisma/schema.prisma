@@ -24,6 +24,14 @@ enum RecommendationMode {
   SHORT_SESSION
   DEEP_DIVE
   RETRY_THIS
+  RECENTLY_DROPPED
+}
+
+enum DeckCompat {
+  UNKNOWN
+  UNSUPPORTED
+  PLAYABLE
+  VERIFIED
 }
 
 model User {
@@ -36,6 +44,10 @@ model User {
   steamProfile    SteamProfile?
   userGames       UserGame[]
   recommendations Recommendation[]
+  customTags      CustomTag[]
+  importSnapshots LibraryImportSnapshot[]
+  wishlistItems   WishlistItem[]
+  friendLinks     FriendLink[]
 }
 
 model SteamProfile {
@@ -63,12 +75,31 @@ model Game {
   iconHash  String?
   iconUrl   String?
   headerUrl String?
+
+  // Steam Deck verified/playable/unsupported (cached, occasional refresh)
+  deckCompat       DeckCompat @default(UNKNOWN)
+  deckCompatAt     DateTime?
+
+  // Total achievements in the game's schema (-1 means none / not applicable)
+  totalAchievements Int?
+
+  // Cached "currently alive" — concurrent player count + when we last fetched
+  currentPlayers   Int?
+  currentPlayersAt DateTime?
+
+  // HowLongToBeat cache — main story / completionist (in minutes)
+  hltbMainMinutes        Int?
+  hltbExtraMinutes       Int?
+  hltbCompletionistMinutes Int?
+  hltbAt                 DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userGames       UserGame[]
   metadata        GameMetadata?
   recommendations Recommendation[]
+  achievements    AchievementDefinition[]
 }
 
 model UserGame {
@@ -81,16 +112,115 @@ model UserGame {
   playtimeMacMinutes      Int?
   playtimeLinuxMinutes    Int?
   lastPlayedAt            DateTime?
+
+  // Per-user achievement progress (cached, refreshed on demand)
+  achievementsUnlocked Int?
+  achievementsTotal    Int?
+  achievementsAt       DateTime?
+
   importedAt              DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
 
-  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  game   Game            @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user   User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game   Game             @relation(fields: [gameId], references: [id], onDelete: Cascade)
   status UserGameStatus?
+  tags   UserGameTag[]
 
   @@unique([userId, gameId])
   @@index([userId, playtimeForeverMinutes])
   @@index([userId, lastPlayedAt])
+}
+
+// Per-user custom tags (e.g. "rainy day", "with the partner")
+model CustomTag {
+  id        String   @id @default(cuid())
+  userId    String
+  label     String
+  color     String?  // optional accent: amber | violet | citrine | ember
+  createdAt DateTime @default(now())
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userGames UserGameTag[]
+
+  @@unique([userId, label])
+  @@index([userId])
+}
+
+model UserGameTag {
+  userGameId String
+  tagId      String
+  createdAt  DateTime @default(now())
+
+  userGame UserGame  @relation(fields: [userGameId], references: [id], onDelete: Cascade)
+  tag      CustomTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([userGameId, tagId])
+  @@index([tagId])
+}
+
+// Game-level achievement schema (cached so we know totals + names)
+model AchievementDefinition {
+  id          String  @id @default(cuid())
+  gameId      String
+  apiName     String
+  displayName String
+  description String?
+  iconUrl     String?
+  hiddenFromUser Boolean @default(false)
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, apiName])
+  @@index([gameId])
+}
+
+// Snapshot of a library import — used by the Import Diff UI
+model LibraryImportSnapshot {
+  id                  String   @id @default(cuid())
+  userId              String
+  importedAt          DateTime @default(now())
+  gameCount           Int
+  totalPlaytimeMinutes Int
+  newAppIds           Json     // app IDs that didn't exist last snapshot
+  playtimeDeltas      Json     // [{ appId, name, deltaMinutes }] of meaningful gains
+  isPrivateOrEmpty    Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, importedAt])
+}
+
+// Per-user wishlist items, refreshed lazily
+model WishlistItem {
+  id         String   @id @default(cuid())
+  userId     String
+  appId      Int
+  name       String
+  headerUrl  String?
+  priority   Int?     // 1 = top of wishlist
+  fetchedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, appId])
+  @@index([userId, priority])
+}
+
+// Cached friend list (only friends with public game lists are useful)
+model FriendLink {
+  id              String   @id @default(cuid())
+  userId          String
+  friendSteamId   String
+  displayName     String?
+  avatarUrl       String?
+  profileUrl      String?
+  ownedGamesAppIds Json    // array of appids the friend owns (cached)
+  fetchedAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendSteamId])
+  @@index([userId])
 }
 
 model GameMetadata {

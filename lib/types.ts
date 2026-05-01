@@ -1,4 +1,5 @@
 import type {
+  DeckCompat,
   ManualGameStatus,
   RecommendationMode,
 } from "@/app/generated/prisma/enums";
@@ -25,6 +26,13 @@ export type LibraryGame = {
   genres: string[];
   categories: string[];
   tags: string[];
+  // New fields — all optional / nullable so older serialized payloads still parse
+  deckCompat?: DeckCompat;
+  currentPlayers?: number | null;
+  achievementsUnlocked?: number | null;
+  achievementsTotal?: number | null;
+  hltbMainMinutes?: number | null;
+  customTags?: Array<{ id: string; label: string; color: string | null }>;
 };
 
 export type LibraryCategory = {
@@ -54,11 +62,16 @@ export type DashboardSummary = {
   topPlayed: LibraryGame[];
   recentlyPlayed: LibraryGame[];
   backlogGems: LibraryGame[];
+  recentlyDropped: Array<{ game: LibraryGame; daysAgo: number }>;
   categories: LibraryCategory[];
   tasteSignals: TasteSignal[];
   playtimeChart: Array<{ name: string; minutes: number; hours: number }>;
   backlogBreakdown: Array<{ name: string; value: number }>;
   timeline: Array<{ label: string; value: number }>;
+  phaseTimeline: {
+    topGenres: string[];
+    series: Array<Record<string, string | number>>;
+  };
 };
 
 export type RecommendationDto = {
