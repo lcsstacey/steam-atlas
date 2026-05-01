@@ -82,6 +82,42 @@ The dashboard exposes:
 - **Refresh library** — reimports the Steam library into the local cache.
 - **Delete data** — removes the local user row and cascades all related profile, library, status, and recommendation rows. Steam itself is unaffected.
 
+## Deploy (Vercel + Turso)
+
+The local SQLite file in `prisma/dev.db` is fine for development but won't survive on a serverless host (Vercel functions have an ephemeral filesystem). Production uses [Turso](https://turso.tech), which is hosted libsql — drop-in compatible with the libsql adapter the app already uses.
+
+1. **Create the Turso database:**
+
+   ```bash
+   # Install the CLI (https://docs.turso.tech/cli/installation)
+   turso auth signup
+   turso db create steam-atlas
+   turso db show steam-atlas --url      # → libsql://… copy this
+   turso db tokens create steam-atlas   # → ey…       copy this
+   ```
+
+2. **Apply the schema to Turso:**
+
+   ```bash
+   DATABASE_URL="libsql://your-url-here?authToken=your-token-here" npx prisma migrate deploy
+   ```
+
+3. **Push to GitHub** if you haven't already.
+
+4. **Import the repo into [Vercel](https://vercel.com/new)** — pick `lcsstacey/steam-atlas`, leave the framework auto-detection as Next.js.
+
+5. **Set environment variables** in Vercel project settings:
+
+   | Name | Value |
+   |---|---|
+   | `STEAM_API_KEY` | from steamcommunity.com/dev/apikey |
+   | `AUTH_SECRET` | `openssl rand -hex 32` |
+   | `NEXT_PUBLIC_APP_URL` | your Vercel URL, e.g. `https://steam-atlas.vercel.app` |
+   | `TURSO_DATABASE_URL` | from step 1 |
+   | `TURSO_AUTH_TOKEN` | from step 1 |
+
+6. **Redeploy.** Steam OpenID has no callback whitelist — it just trusts the realm/return URL the app sends — so nothing else needs registering.
+
 ## Design
 
 The UI uses a Steam-inspired blue palette layered over a deep blue-black surface, with warm coral and lime accents reserved for "active" and "warning" signals. Typography pairs Instrument Sans (body), Space Grotesk (display), and JetBrains Mono (numeric labels).
