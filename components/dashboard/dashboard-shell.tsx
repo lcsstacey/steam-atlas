@@ -78,7 +78,7 @@ export function DashboardShell({
           </button>
         </aside>
 
-        <main className="min-w-0 space-y-6">
+        <main className="min-w-0 space-y-6" id="main-content">
           <div className="flex items-center justify-between gap-3 lg:hidden">
             <a className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]" href="/dashboard">
               <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-gradient-to-br from-[#b6dfff] to-[#2a87d4] text-[#06121f]">

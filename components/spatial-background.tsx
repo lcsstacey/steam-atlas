@@ -3,7 +3,14 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const PARTICLE_COUNT = 2200;
+// Particle budget by screen size — phones get a lighter scene since
+// they pay full fragment cost on every point and have weaker GPUs.
+function pickParticleCount(width: number) {
+  if (width < 640) return 800;     // small phones
+  if (width < 1024) return 1400;   // tablets, narrow laptops
+  if (width < 1600) return 2000;   // typical desktop
+  return 2400;                     // large/4K
+}
 
 const vertexShader = `
 uniform float uTime;
@@ -79,15 +86,16 @@ export function SpatialBackground() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    const positions = new Float32Array(PARTICLE_COUNT * 3);
-    const scales = new Float32Array(PARTICLE_COUNT);
-    const phases = new Float32Array(PARTICLE_COUNT);
+    const particleCount = pickParticleCount(window.innerWidth);
+    const positions = new Float32Array(particleCount * 3);
+    const scales = new Float32Array(particleCount);
+    const phases = new Float32Array(particleCount);
     const golden = Math.PI * (3 - Math.sqrt(5));
 
-    for (let index = 0; index < PARTICLE_COUNT; index += 1) {
-      const layer = index / PARTICLE_COUNT;
+    for (let index = 0; index < particleCount; index += 1) {
+      const layer = index / particleCount;
       const radius = 2.1 + Math.sin(layer * Math.PI * 4) * 0.52 + layer * 2.8;
-      const y = 1 - (index / (PARTICLE_COUNT - 1)) * 2;
+      const y = 1 - (index / (particleCount - 1)) * 2;
       const radial = Math.sqrt(1 - y * y);
       const theta = index * golden;
       const spiral = theta + Math.sin(layer * 10) * 0.7;

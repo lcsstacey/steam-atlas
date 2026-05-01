@@ -98,7 +98,13 @@ export function LandingShowcase() {
                 key={`${game.name}-${index}`}
               >
                 <div className="relative h-24 overflow-hidden">
-                  <img alt="" className="h-full w-full object-cover" src={game.url} />
+                  <img
+                    alt=""
+                    className="h-full w-full object-cover"
+                    decoding="async"
+                    loading="lazy"
+                    src={game.url}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <Badge className="absolute bottom-2 left-2" variant={game.hours === "0h" ? "amber" : "teal"}>
                     {game.hours}

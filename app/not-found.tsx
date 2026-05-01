@@ -4,7 +4,7 @@ import { Panel } from "@/components/ui/panel";
 
 export default function NotFound() {
   return (
-    <main className="grid min-h-screen place-items-center px-4 py-12 sm:px-6 lg:px-8">
+    <main className="grid min-h-screen place-items-center px-4 py-12 sm:px-6 lg:px-8" id="main-content">
       <Panel className="mx-auto max-w-md overflow-hidden p-8 text-center">
         <div className="icon-crystal mx-auto h-14 w-14">
           <Compass className="h-5 w-5" strokeWidth={2.2} />

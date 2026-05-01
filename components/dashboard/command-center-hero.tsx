@@ -98,7 +98,13 @@ export function CommandCenterHero({
                   transition={{ duration: 4 + index * 0.4, delay: index * 0.2, repeat: Infinity, ease: "easeInOut" }}
                 >
                   {game.headerUrl ? (
-                    <img alt="" className="h-full w-full object-cover opacity-80" src={game.headerUrl} />
+                    <img
+                      alt=""
+                      className="h-full w-full object-cover opacity-80"
+                      decoding="async"
+                      loading="lazy"
+                      src={game.headerUrl}
+                    />
                   ) : null}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 </motion.div>

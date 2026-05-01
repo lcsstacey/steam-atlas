@@ -104,7 +104,7 @@ export default async function Home({
   const [params, user] = await Promise.all([searchParams, getCurrentUser()]);
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 py-5 sm:px-6 lg:px-8">
+    <main className="relative min-h-screen overflow-hidden px-4 py-5 sm:px-6 lg:px-8" id="main-content">
       <div className="mx-auto max-w-7xl">
         <nav className="flex items-center justify-between gap-4">
           <Link className="flex items-center gap-3" href="/">

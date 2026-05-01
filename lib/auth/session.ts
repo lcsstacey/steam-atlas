@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import type { NextResponse } from "next/server";
+import { cache } from "react";
 import { getAuthSecret } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import type { SessionUser } from "@/lib/types";
@@ -99,7 +100,10 @@ export async function getSession() {
   return verifySignedValue(raw);
 }
 
-export async function getCurrentUser(): Promise<SessionUser | null> {
+// Wrapped in React's request-scoped cache() so multiple server components
+// in the same render (e.g. layout + page) share a single DB lookup instead
+// of round-tripping per call site.
+export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
   const session = await getSession();
   if (!session) return null;
 
@@ -118,4 +122,4 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     profileUrl: user.steamProfile?.profileUrl ?? null,
     lastLibraryImportAt: user.lastLibraryImportAt?.toISOString() ?? null,
   };
-}
+});
