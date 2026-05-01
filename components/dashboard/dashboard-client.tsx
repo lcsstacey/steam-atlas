@@ -1,8 +1,8 @@
 ﻿"use client";
 
 import { Clock3, Gamepad2, LibraryBig, ListChecks, Sparkles } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { BacklogBreakdownChart, GenreRadarChart, PlaytimeBarChart } from "@/components/dashboard/charts";
 import { CommandCenterHero } from "@/components/dashboard/command-center-hero";
 import { EmptyPrivateProfileState } from "@/components/dashboard/empty-private-profile-state";
@@ -34,12 +34,47 @@ async function fetchRecommendations() {
 
 export function DashboardClient() {
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("Overview");
+  const queryClient = useQueryClient();
   const dashboard = useQuery({ queryKey: ["dashboard"], queryFn: fetchDashboard });
   const recommendations = useQuery({
     queryKey: ["recommendations"],
     queryFn: fetchRecommendations,
     enabled: Boolean(dashboard.data && !dashboard.data.isPrivateOrEmpty),
   });
+
+  // Refresh "currently alive" counts for visible games once per dashboard load.
+  // The endpoint caches its own results, so it's cheap to call.
+  useEffect(() => {
+    const data = dashboard.data;
+    if (!data) return;
+    const candidateAppIds = [
+      ...data.topPlayed,
+      ...data.backlogGems,
+      ...data.recentlyDropped.map((entry) => entry.game),
+    ]
+      .map((game) => game.appId)
+      .slice(0, 24);
+    if (candidateAppIds.length === 0) return;
+
+    let cancelled = false;
+    fetch("/api/live-players", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ appIds: candidateAppIds }),
+    })
+      .then(() => {
+        if (!cancelled) {
+          queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+    // Run once per dashboard load — re-pinging is unnecessary because the API
+    // service caches counts for 30 minutes anyway.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Boolean(dashboard.data)]);
 
   if (dashboard.isLoading) return <LoadingLibraryScan />;
   if (dashboard.data?.isPrivateOrEmpty) return <EmptyPrivateProfileState />;
@@ -137,6 +172,13 @@ export function DashboardClient() {
               </p>
             </Panel>
           </div>
+          {data.recentlyDropped.length > 0 ? (
+            <GameCarousel
+              description="Started recently, played for a chunk, then quietly stopped. Resume?"
+              games={data.recentlyDropped.map((entry) => entry.game)}
+              title="Recently dropped"
+            />
+          ) : null}
           <GameCarousel
             description="Low-playtime games that still resemble your taste profile."
             games={data.backlogGems}

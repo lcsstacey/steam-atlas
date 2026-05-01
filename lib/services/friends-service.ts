@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { steamApiService } from "@/lib/steam/steam-api-service";
 
-const FRIEND_CACHE_MS = 24 * 60 * 60 * 1000; // 24h
-
 /**
  * Refresh the friend list and (for each friend with a public library) cache
  * the appids they own. Skips friends whose library is private.

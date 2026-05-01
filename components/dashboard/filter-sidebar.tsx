@@ -14,20 +14,24 @@ export type LibraryFilter =
   | "forgotten"
   | "high"
   | "low"
-  | "random";
+  | "random"
+  | "deck-verified"
+  | "deck-playable"
+  | "co-op";
 
-const filters: Array<{ id: LibraryFilter; label: string }> = [
+const filters: Array<{ id: LibraryFilter; label: string; group?: string }> = [
   { id: "all", label: "All games" },
-  { id: "never", label: "Never played" },
-  { id: "under-1", label: "Under 1 hour" },
-  { id: "1-5", label: "1—5 hours" },
-  { id: "5-20", label: "5—20 hours" },
-  { id: "20-plus", label: "20+ hours" },
-  { id: "recent", label: "Recently played" },
-  { id: "forgotten", label: "Forgotten favorites" },
-  { id: "high", label: "High playtime" },
-  { id: "low", label: "Low playtime" },
-  { id: "random", label: "Random candidates" },
+  { id: "never", label: "Never played", group: "Backlog" },
+  { id: "under-1", label: "Under 1 hour", group: "Backlog" },
+  { id: "1-5", label: "1—5 hours", group: "Playtime" },
+  { id: "5-20", label: "5—20 hours", group: "Playtime" },
+  { id: "20-plus", label: "20+ hours", group: "Playtime" },
+  { id: "recent", label: "Recently played", group: "Activity" },
+  { id: "forgotten", label: "Forgotten favorites", group: "Activity" },
+  { id: "deck-verified", label: "Deck Verified", group: "Steam Deck" },
+  { id: "deck-playable", label: "Deck Playable", group: "Steam Deck" },
+  { id: "co-op", label: "Co-op", group: "Multiplayer" },
+  { id: "random", label: "Random candidates", group: "Other" },
 ];
 
 export function FilterSidebar({

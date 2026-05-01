@@ -2,7 +2,18 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Download, EyeOff, Play, Shuffle, Sparkles } from "lucide-react";
+import {
+  CheckCircle2,
+  CircleSlash,
+  Download,
+  EyeOff,
+  Gamepad2,
+  Play,
+  Shuffle,
+  Sparkles,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -83,6 +94,13 @@ export function GameCard({
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(93,184,255,0.6)] to-transparent" />
       </div>
 
+      <DeckCompatBadge compat={game.deckCompat} />
+      <LivePlayersChip count={game.currentPlayers ?? null} />
+      <AchievementChip
+        unlocked={game.achievementsUnlocked ?? null}
+        total={game.achievementsTotal ?? null}
+      />
+
       <div className={cn("relative overflow-hidden bg-[#07101a]", compact ? "h-28" : "h-40")}>
         {game.headerUrl ? (
           <img
@@ -125,6 +143,19 @@ export function GameCard({
         <h3 className="line-clamp-2 min-h-[40px] text-[14px] font-semibold leading-5 tracking-tight text-[var(--foreground)]">
           {game.name}
         </h3>
+        {game.customTags && game.customTags.length > 0 ? (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {game.customTags.slice(0, 3).map((tag) => (
+              <span
+                className="rounded-full border border-[rgba(154,140,255,0.32)] bg-[rgba(154,140,255,0.1)] px-2 py-0.5 text-[10px] font-medium text-[#cfc8ff]"
+                key={tag.id}
+                title={tag.label}
+              >
+                {tag.label}
+              </span>
+            ))}
+          </div>
+        ) : null}
         {reason ? (
           <p className="mt-2 line-clamp-3 text-[12px] leading-5 text-[var(--muted-strong)]">{reason}</p>
         ) : (
@@ -206,4 +237,92 @@ function getPlayState(game: LibraryGame) {
   if (game.playtimeMinutes < 60) return "First look";
   if (game.playtimeMinutes >= 1200) return "Favorite";
   return "Played";
+}
+
+function DeckCompatBadge({ compat }: { compat: LibraryGame["deckCompat"] }) {
+  if (!compat || compat === "UNKNOWN") return null;
+  const config = {
+    VERIFIED: {
+      label: "Deck Verified",
+      color: "rgba(163,230,53,0.15)",
+      border: "rgba(163,230,53,0.4)",
+      text: "#e1f4a0",
+      Icon: CheckCircle2,
+    },
+    PLAYABLE: {
+      label: "Deck Playable",
+      color: "rgba(93,184,255,0.15)",
+      border: "rgba(93,184,255,0.4)",
+      text: "#a3d9ff",
+      Icon: Gamepad2,
+    },
+    UNSUPPORTED: {
+      label: "Deck Unsupported",
+      color: "rgba(255,138,92,0.12)",
+      border: "rgba(255,138,92,0.32)",
+      text: "#ffd1b8",
+      Icon: CircleSlash,
+    },
+  } as const;
+  const cfg = config[compat as keyof typeof config];
+  if (!cfg) return null;
+  const { Icon } = cfg;
+  return (
+    <div
+      className="absolute right-2.5 top-2.5 z-20 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium backdrop-blur-md"
+      style={{ background: cfg.color, borderColor: cfg.border, color: cfg.text }}
+      title={cfg.label}
+    >
+      <Icon className="h-3 w-3" strokeWidth={2.4} />
+      {compat === "VERIFIED" ? "Verified" : compat === "PLAYABLE" ? "Playable" : "Unsupported"}
+    </div>
+  );
+}
+
+function LivePlayersChip({ count }: { count: number | null }) {
+  if (count === null || count < 50) return null; // hide ghost towns
+  const formatted = count >= 10000 ? `${(count / 1000).toFixed(0)}k` : count.toLocaleString();
+  return (
+    <div
+      className="absolute right-2.5 bottom-[calc(100%-2.7rem)] z-20 inline-flex items-center gap-1 rounded-full border border-[rgba(163,230,53,0.4)] bg-[rgba(163,230,53,0.15)] px-2 py-0.5 text-[10px] font-medium text-[#e1f4a0] backdrop-blur-md"
+      title={`${count.toLocaleString()} playing now`}
+    >
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#a3e635] opacity-60" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#a3e635]" />
+      </span>
+      <Users className="h-3 w-3" strokeWidth={2.4} />
+      {formatted}
+    </div>
+  );
+}
+
+function AchievementChip({
+  unlocked,
+  total,
+}: {
+  unlocked: number | null;
+  total: number | null;
+}) {
+  if (unlocked === null || total === null || total === 0) return null;
+  const pct = Math.round((unlocked / total) * 100);
+  const isPerfect = unlocked === total;
+  const isClose = !isPerfect && pct >= 80;
+
+  return (
+    <div
+      className={cn(
+        "absolute left-2.5 bottom-[calc(100%-2.7rem)] z-20 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium backdrop-blur-md",
+        isPerfect
+          ? "border-[rgba(245,189,99,0.5)] bg-[rgba(245,189,99,0.15)] text-[#ffdfa6]"
+          : isClose
+            ? "border-[rgba(163,230,53,0.4)] bg-[rgba(163,230,53,0.12)] text-[#e1f4a0]"
+            : "border-[var(--line-strong)] bg-black/40 text-[var(--muted-strong)]",
+      )}
+      title={`${unlocked} / ${total} achievements`}
+    >
+      <Trophy className="h-3 w-3" strokeWidth={2.4} />
+      {pct}%
+    </div>
+  );
 }

@@ -20,6 +20,8 @@ export function UserProfileHeader({ user }: { user: SessionUser }) {
         queryClient.invalidateQueries({ queryKey: ["dashboard"] }),
         queryClient.invalidateQueries({ queryKey: ["library"] }),
         queryClient.invalidateQueries({ queryKey: ["recommendations"] }),
+        queryClient.invalidateQueries({ queryKey: ["import-snapshot"] }),
+        queryClient.invalidateQueries({ queryKey: ["time-debt"] }),
       ]);
     },
   });

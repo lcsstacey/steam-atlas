@@ -135,6 +135,9 @@ function MiniMetric({ label, value }: { label: string; value: number }) {
 }
 
 function buildCounts(games: LibraryGame[]) {
+  const isCoop = (g: LibraryGame) =>
+    g.categories.some((c) => c.toLowerCase().includes("co-op") || c.toLowerCase().includes("co op"));
+
   return {
     all: games.length,
     never: games.filter((game) => game.playtimeMinutes === 0).length,
@@ -147,6 +150,11 @@ function buildCounts(games: LibraryGame[]) {
     high: games.filter((game) => game.playtimeMinutes >= 1200).length,
     low: games.filter((game) => game.playtimeMinutes < 300).length,
     random: games.filter((game) => game.playtimeMinutes < 300 && game.manualStatus !== "NOT_INTERESTED").length,
+    "deck-verified": games.filter((game) => game.deckCompat === "VERIFIED").length,
+    "deck-playable": games.filter(
+      (game) => game.deckCompat === "VERIFIED" || game.deckCompat === "PLAYABLE",
+    ).length,
+    "co-op": games.filter(isCoop).length,
   };
 }
 
@@ -172,6 +180,14 @@ function matchesFilter(game: LibraryGame, filter: LibraryFilter) {
       return game.playtimeMinutes < 300;
     case "random":
       return game.playtimeMinutes < 300 && game.manualStatus !== "NOT_INTERESTED";
+    case "deck-verified":
+      return game.deckCompat === "VERIFIED";
+    case "deck-playable":
+      return game.deckCompat === "VERIFIED" || game.deckCompat === "PLAYABLE";
+    case "co-op":
+      return game.categories.some(
+        (c) => c.toLowerCase().includes("co-op") || c.toLowerCase().includes("co op"),
+      );
     default:
       return true;
   }

@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { BarChart3, Compass, Library, LogOut, Sparkles } from "lucide-react";
+import { BarChart3, Compass, Library, LogOut, Radar, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { UserProfileHeader } from "@/components/dashboard/user-profile-header";
 import type { SessionUser } from "@/lib/types";
@@ -10,6 +10,7 @@ const navItems = [
   { href: "/dashboard", label: "Overview", icon: BarChart3 },
   { href: "/library", label: "Library", icon: Library },
   { href: "/recommendations", label: "Recommendations", icon: Sparkles },
+  { href: "/insights", label: "Insights", icon: Radar },
 ];
 
 export function DashboardShell({
