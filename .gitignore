@@ -31,8 +31,12 @@ yarn-error.log*
 .pnpm-debug.log*
 .tmp-visual-qa*.png
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files — keep .env.example tracked, ignore real ones
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
 
 # Claude Code local config and lock files
 .claude/

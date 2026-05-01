@@ -86,12 +86,18 @@ export function GameCard({
       <div className={cn("relative overflow-hidden bg-[#07101a]", compact ? "h-28" : "h-40")}>
         {game.headerUrl ? (
           <img
-            alt=""
+            alt={`${game.name} cover art`}
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.06]"
+            loading="lazy"
+            decoding="async"
             src={game.headerUrl}
           />
         ) : (
-          <div className="grid h-full place-items-center bg-gradient-to-br from-[#0d1828] to-[#07101a] text-[12px] text-[var(--muted)]">
+          <div
+            aria-label={`No cover art for ${game.name}`}
+            className="grid h-full place-items-center bg-gradient-to-br from-[#0d1828] to-[#07101a] text-[12px] text-[var(--muted)]"
+            role="img"
+          >
             No art
           </div>
         )}

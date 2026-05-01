@@ -41,7 +41,12 @@ export function UserProfileHeader({ user }: { user: SessionUser }) {
         <div className="flex items-center gap-4">
           <div className="relative h-14 w-14 overflow-hidden rounded-[14px] border border-[var(--line-strong)] bg-[#0a1421] shadow-[inset_0_1px_0_rgba(180,210,240,0.08)]">
             {user.avatarUrl ? (
-              <img alt="" className="h-full w-full object-cover" src={user.avatarUrl} />
+              <img
+                alt={`${user.displayName} avatar`}
+                className="h-full w-full object-cover"
+                decoding="async"
+                src={user.avatarUrl}
+              />
             ) : (
               <div className="grid h-full place-items-center text-lg font-semibold text-[var(--muted)]">
                 {user.displayName.slice(0, 1).toUpperCase()}

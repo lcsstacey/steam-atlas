@@ -91,10 +91,11 @@ export function DashboardClient() {
         />
       </section>
 
-      <section className="glass-panel p-1.5">
+      <section aria-label="Dashboard sections" className="glass-panel p-1.5" role="tablist">
         <div className="grid gap-1 sm:grid-cols-5">
           {tabs.map((tab) => (
             <button
+              aria-selected={activeTab === tab}
               className={
                 activeTab === tab
                   ? "rounded-[10px] bg-[rgba(93,184,255,0.12)] px-3 py-2 text-[13px] font-semibold text-[var(--foreground)] shadow-[inset_0_0_0_1px_rgba(93,184,255,0.28)]"
@@ -102,6 +103,8 @@ export function DashboardClient() {
               }
               key={tab}
               onClick={() => setActiveTab(tab)}
+              role="tab"
+              type="button"
             >
               {tab}
             </button>

@@ -46,6 +46,7 @@ export function DashboardShell({
               const active = pathname === item.href;
               return (
                 <a
+                  aria-current={active ? "page" : undefined}
                   className={cn(
                     "group flex items-center gap-3 rounded-[10px] px-3 py-2 text-[13px] font-medium transition-colors",
                     active
@@ -91,6 +92,7 @@ export function DashboardShell({
                 const active = pathname === item.href;
                 return (
                   <a
+                    aria-current={active ? "page" : undefined}
                     aria-label={item.label}
                     className={cn(
                       "grid h-9 w-9 place-items-center rounded-[10px] border transition-colors",
@@ -106,6 +108,14 @@ export function DashboardShell({
                   </a>
                 );
               })}
+              <button
+                aria-label="Sign out"
+                className="grid h-9 w-9 place-items-center rounded-[10px] border border-[var(--line)] bg-white/[0.03] text-[var(--muted-strong)] transition-colors hover:bg-white/[0.06]"
+                onClick={logout}
+                title="Sign out"
+              >
+                <LogOut className="h-4 w-4" strokeWidth={2.2} />
+              </button>
             </div>
           </div>
           <UserProfileHeader user={user} />

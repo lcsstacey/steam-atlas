@@ -58,6 +58,10 @@ export function SpatialBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Honor user motion preference — keep the canvas blank for users who opted out.
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 7.6);
@@ -67,9 +71,12 @@ export function SpatialBackground() {
       antialias: true,
       canvas,
       powerPreference: "high-performance",
-      preserveDrawingBuffer: true,
+      // preserveDrawingBuffer: true was unnecessary for an ambient background and
+      // roughly doubled GPU memory by forcing a non-discardable backbuffer.
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
+    // 1.5 is a tasteful cap — the visual gain past 1.5 is invisible for soft particles
+    // but the cost is ~1.5x more fragments shaded.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const positions = new Float32Array(PARTICLE_COUNT * 3);
@@ -122,6 +129,7 @@ export function SpatialBackground() {
     const targetPointer = new THREE.Vector2(0, 0);
     const startTime = performance.now();
     let frame = 0;
+    let paused = document.hidden;
 
     function onPointerMove(event: PointerEvent) {
       targetPointer.x = (event.clientX / window.innerWidth - 0.5) * 2;
@@ -134,7 +142,17 @@ export function SpatialBackground() {
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    function onVisibilityChange() {
+      const wasPaused = paused;
+      paused = document.hidden;
+      if (wasPaused && !paused) {
+        // restart the animation loop after coming back from a hidden tab
+        animate();
+      }
+    }
+
     function animate() {
+      if (paused) return;
       frame = requestAnimationFrame(animate);
       const elapsed = (performance.now() - startTime) / 1000;
       pointer.lerp(targetPointer, 0.045);
@@ -145,14 +163,16 @@ export function SpatialBackground() {
       renderer.render(scene, camera);
     }
 
-    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("resize", onResize);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     animate();
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       geometry.dispose();
       material.dispose();
       renderer.dispose();
