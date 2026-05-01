@@ -24,25 +24,25 @@ const mono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Steam Compass — Library intelligence",
-    template: "%s · Steam Compass",
+    default: "Steam Atlas — Library intelligence",
+    template: "%s · Steam Atlas",
   },
   description:
     "Turn your Steam library into a calm decision engine: taste signals, backlog gems, and a next-play recommendation that explains itself.",
-  applicationName: "Steam Compass",
+  applicationName: "Steam Atlas",
   keywords: ["Steam", "library", "backlog", "recommendations", "gaming", "dashboard"],
-  authors: [{ name: "Steam Compass" }],
+  authors: [{ name: "Steam Atlas" }],
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    title: "Steam Compass — Library intelligence",
+    title: "Steam Atlas — Library intelligence",
     description:
       "Turn your Steam library into a calm decision engine: taste signals, backlog gems, and a next-play recommendation that explains itself.",
-    siteName: "Steam Compass",
+    siteName: "Steam Atlas",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Steam Compass — Library intelligence",
+    title: "Steam Atlas — Library intelligence",
     description:
       "Turn your Steam library into a calm decision engine: taste signals, backlog gems, and a next-play recommendation that explains itself.",
   },

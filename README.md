@@ -1,6 +1,6 @@
-# Steam Compass
+# Steam Atlas
 
-Steam Compass is a Next.js dashboard that turns your Steam library into a calm decision engine. Sign in with Steam OpenID, the backend imports your owned games and playtime through the Steam Web API, and the app renders analytics, backlog categories, manual statuses, and explainable recommendations.
+Steam Atlas is a Next.js dashboard that turns your Steam library into a calm decision engine. Sign in with Steam OpenID, the backend imports your owned games and playtime through the Steam Web API, and the app renders analytics, backlog categories, manual statuses, and explainable recommendations.
 
 ## Stack
 
@@ -53,7 +53,7 @@ Steam Compass is a Next.js dashboard that turns your Steam library into a calm d
 - Steam login uses OpenID 2.0 and only returns a SteamID64. The app never asks for your Steam username or password.
 - The Steam API key is only read by server code — it never reaches the browser.
 - Library import uses `IPlayerService/GetOwnedGames` with `include_appinfo=true` and `include_played_free_games=true`.
-- Steam doesn't reliably expose locally-installed games via the public API. Steam Compass stores manual statuses instead: **Installed**, **Want to install**, **Play next**, **Finished**, **Dropped**, and **Not interested**.
+- Steam doesn't reliably expose locally-installed games via the public API. Steam Atlas stores manual statuses instead: **Installed**, **Want to install**, **Play next**, **Finished**, **Dropped**, and **Not interested**.
 - If your Steam profile has *Game details* set to private, the API returns no library data — the dashboard then renders a friendly private-profile state.
 
 ## Recommendation Engine

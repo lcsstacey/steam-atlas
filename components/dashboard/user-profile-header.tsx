@@ -27,7 +27,7 @@ export function UserProfileHeader({ user }: { user: SessionUser }) {
   });
 
   async function deleteData() {
-    const confirmed = window.confirm("Delete your Steam Compass data from this app?");
+    const confirmed = window.confirm("Delete your Steam Atlas data from this app?");
     if (!confirmed) return;
 
     const response = await fetch("/api/account/delete", { method: "DELETE" });

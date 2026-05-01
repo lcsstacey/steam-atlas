@@ -14,7 +14,7 @@ export function getAuthSecret() {
   if (process.env.NODE_ENV === "production") {
     throw new Error("Missing required environment variable: AUTH_SECRET");
   }
-  return "dev-only-steam-compass-auth-secret";
+  return "dev-only-steam-atlas-auth-secret";
 }
 
 export function getAppBaseUrl(request?: NextRequest) {

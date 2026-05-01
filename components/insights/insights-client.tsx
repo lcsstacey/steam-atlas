@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Compass } from "lucide-react";
+import { Map as MapIcon } from "lucide-react";
 import { useState } from "react";
 import { AchievementsPanel } from "@/components/insights/achievements-panel";
 import { CustomTagsPanel } from "@/components/insights/custom-tags-panel";
@@ -44,7 +44,7 @@ export function InsightsClient() {
         <div className="pointer-events-none absolute inset-0 ambient-grid opacity-30" />
         <div className="relative">
           <Badge variant="teal">
-            <Compass className="h-3 w-3" strokeWidth={2.4} />
+            <MapIcon className="h-3 w-3" strokeWidth={2.4} />
             Library insights
           </Badge>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-[var(--foreground)] lg:text-[44px]">

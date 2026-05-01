@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { BarChart3, Compass, Library, LogOut, Radar, Sparkles } from "lucide-react";
+import { BarChart3, Library, LogOut, Map as MapIcon, Radar, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { UserProfileHeader } from "@/components/dashboard/user-profile-header";
 import type { SessionUser } from "@/lib/types";
@@ -33,10 +33,10 @@ export function DashboardShell({
         <aside className="glass-panel sticky top-4 hidden h-[calc(100vh-2rem)] flex-col p-4 lg:flex">
           <a className="flex items-center gap-3 px-1.5" href="/dashboard">
             <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-gradient-to-br from-[#b6dfff] to-[#2a87d4] text-[#06121f] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-4px_rgba(93,184,255,0.5)]">
-              <Compass className="h-4.5 w-4.5" strokeWidth={2.4} />
+              <MapIcon className="h-4.5 w-4.5" strokeWidth={2.4} />
             </span>
             <span className="leading-tight">
-              <span className="block text-[13px] font-semibold tracking-tight text-[var(--foreground)]">Steam Compass</span>
+              <span className="block text-[13px] font-semibold tracking-tight text-[var(--foreground)]">Steam Atlas</span>
               <span className="block text-[11px] text-[var(--muted)]">Library intelligence</span>
             </span>
           </a>
@@ -83,9 +83,9 @@ export function DashboardShell({
           <div className="flex items-center justify-between gap-3 lg:hidden">
             <a className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]" href="/dashboard">
               <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-gradient-to-br from-[#b6dfff] to-[#2a87d4] text-[#06121f]">
-                <Compass className="h-4 w-4" strokeWidth={2.4} />
+                <MapIcon className="h-4 w-4" strokeWidth={2.4} />
               </span>
-              Steam Compass
+              Steam Atlas
             </a>
             <div className="flex gap-1.5">
               {navItems.map((item) => {

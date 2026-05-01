@@ -82,7 +82,7 @@ export class HltbService {
           Referer: HLTB_REFERRER,
           Origin: HLTB_REFERRER,
           "User-Agent":
-            "Mozilla/5.0 (compatible; SteamCompass/1.0; +https://github.com/lcsstacey/steam-compass)",
+            "Mozilla/5.0 (compatible; SteamAtlas/1.0; +https://github.com/lcsstacey/steam-atlas)",
         },
         body: JSON.stringify(body),
         cache: "no-store",

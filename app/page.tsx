@@ -2,12 +2,12 @@ import type { CSSProperties } from "react";
 import {
   ArrowRight,
   BarChart3,
-  Compass,
   Dices,
   Eye,
   Flame,
   Library,
   LockKeyhole,
+  Map as MapIcon,
   Radar,
   Sparkles,
   type LucideIcon,
@@ -109,10 +109,10 @@ export default async function Home({
         <nav className="flex items-center justify-between gap-4">
           <Link className="flex items-center gap-3" href="/">
             <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-gradient-to-br from-[#b6dfff] to-[#2a87d4] text-[#06121f] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-4px_rgba(93,184,255,0.5)]">
-              <Compass className="h-4.5 w-4.5" strokeWidth={2.4} />
+              <MapIcon className="h-4.5 w-4.5" strokeWidth={2.4} />
             </span>
             <span className="leading-tight">
-              <span className="block text-[14px] font-semibold tracking-tight text-[var(--foreground)]">Steam Compass</span>
+              <span className="block text-[14px] font-semibold tracking-tight text-[var(--foreground)]">Steam Atlas</span>
               <span className="hidden text-[11px] text-[var(--muted)] sm:block">Library intelligence</span>
             </span>
           </Link>
@@ -146,7 +146,7 @@ export default async function Home({
               </span>
             </h1>
             <p className="mt-6 max-w-2xl text-[17px] leading-7 text-[var(--muted-strong)]">
-              Steam Compass reads the shape of your library and turns it into a calm command center —
+              Steam Atlas reads the shape of your library and turns it into a calm command center —
               taste signals, backlog gems, retry picks, comfort games, and a next-play recommendation
               that actually explains itself.
             </p>
@@ -182,7 +182,7 @@ export default async function Home({
               Built for oversized libraries.
             </h2>
             <p className="mt-3 text-[15px] leading-7 text-[var(--muted-strong)]">
-              Steam Compass focuses on games you already own, caches imports, and explains every
+              Steam Atlas focuses on games you already own, caches imports, and explains every
               recommendation as a read on your actual habits — not a generic score.
             </p>
           </div>

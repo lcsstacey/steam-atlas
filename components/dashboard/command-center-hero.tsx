@@ -39,7 +39,7 @@ export function CommandCenterHero({
             Your library has a signal.
             <br />
             <span className="bg-gradient-to-r from-[#b6dfff] via-[#5db8ff] to-[#ff8a5c] bg-clip-text text-transparent">
-              Steam Compass found the next move.
+              Steam Atlas found the next move.
             </span>
           </h2>
           <p className="mt-5 max-w-2xl text-[15px] leading-7 text-[var(--muted-strong)]">

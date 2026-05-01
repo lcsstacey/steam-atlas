@@ -6,7 +6,7 @@ import { getAuthSecret } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import type { SessionUser } from "@/lib/types";
 
-const SESSION_COOKIE = "steam_compass_session";
+const SESSION_COOKIE = "steam_atlas_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
 type SessionPayload = {

@@ -21,7 +21,7 @@ export function EmptyPrivateProfileState() {
         Steam is keeping this library private
       </h2>
       <p className="relative mx-auto mt-3 max-w-2xl text-[14px] leading-6 text-[var(--muted-strong)]">
-        Steam Compass could identify your account, but Steam did not return library data.
+        Steam Atlas could identify your account, but Steam did not return library data.
         This usually means your game details are private, or the library is empty. Steam settings
         can block owned games and playtime even when the profile itself is visible.
       </p>

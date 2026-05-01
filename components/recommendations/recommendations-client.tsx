@@ -1,6 +1,6 @@
 "use client";
 
-import { Compass, Dices, Loader2, Sparkles } from "lucide-react";
+import { Map as MapIcon, Dices, Loader2, Sparkles } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { EmptyPrivateProfileState } from "@/components/dashboard/empty-private-profile-state";
@@ -56,7 +56,7 @@ export function RecommendationsClient() {
         <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <Badge variant="teal">
-              <Compass className="h-3 w-3" />
+              <MapIcon className="h-3 w-3" />
               Owned-library recommender
             </Badge>
             <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-[var(--foreground)] lg:text-[44px]">
