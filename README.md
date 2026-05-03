@@ -2,6 +2,8 @@
 
 Steam Atlas is a Next.js dashboard that turns your Steam library into a calm decision engine. Sign in with Steam OpenID, the backend imports your owned games and playtime through the Steam Web API, and the app renders analytics, backlog categories, manual statuses, and explainable recommendations.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flcsstacey%2Fsteam-atlas&env=STEAM_API_KEY,AUTH_SECRET,NEXT_PUBLIC_APP_URL,DATABASE_URL&envDescription=See%20the%20Deploy%20section%20of%20the%20README%20for%20how%20to%20get%20each%20value&envLink=https%3A%2F%2Fgithub.com%2Flcsstacey%2Fsteam-atlas%23deploy-vercel--turso&project-name=steam-atlas&repository-name=steam-atlas)
+
 ## Stack
 
 - **Next.js 16** (App Router, Turbopack) + **React 19** + **TypeScript**
