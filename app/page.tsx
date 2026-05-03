@@ -1,9 +1,7 @@
-import type { CSSProperties } from "react";
 import {
   ArrowRight,
   BarChart3,
   Dices,
-  Eye,
   Flame,
   Library,
   LockKeyhole,
@@ -14,86 +12,60 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { LandingShowcase } from "@/components/landing/landing-showcase";
+import { SpatialBackgroundClient } from "@/components/landing/spatial-background-client";
 import { SteamLoginButton } from "@/components/steam-login-button";
-import { Badge } from "@/components/ui/badge";
 import { buttonClassName } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 
-type Tone = "amber" | "violet" | "citrine" | "ember";
-
-const toneVars: Record<Tone, CSSProperties> = {
-  amber: {
-    "--signal-a": "#5db8ff",
-    "--signal-b": "#ff8a5c",
-    "--signal-c": "#dbe7f2",
-  } as CSSProperties,
-  violet: {
-    "--signal-a": "#9a8cff",
-    "--signal-b": "#c0b6ff",
-    "--signal-c": "#e2dcff",
-  } as CSSProperties,
-  citrine: {
-    "--signal-a": "#a3e635",
-    "--signal-b": "#5db8ff",
-    "--signal-c": "#f0f6c4",
-  } as CSSProperties,
-  ember: {
-    "--signal-a": "#ff8a5c",
-    "--signal-b": "#5db8ff",
-    "--signal-c": "#ffd1b8",
-  } as CSSProperties,
-};
-
-const featureCards: Array<{
+const featureItems: Array<{
   title: string;
   description: string;
   icon: LucideIcon;
-  signal: number;
-  tone: Tone;
 }> = [
   {
     title: "Library Analytics",
-    description: "Playtime, recency, backlog depth, and collection health — at a glance.",
+    description:
+      "Playtime, recency, backlog depth, and collection health. Not a vanity dashboard — a working picture of your library.",
     icon: BarChart3,
-    signal: 88,
-    tone: "amber",
   },
   {
     title: "Backlog Finder",
-    description: "Surface games you own that deserve a real first session, not another shelf year.",
+    description:
+      "Surfaces games you own that deserve a real first session, not another shelf year. Sorted by taste overlap.",
     icon: Library,
-    signal: 72,
-    tone: "violet",
   },
   {
     title: "Taste Profile",
-    description: "Weighted signals from the games you actually play — not the ones you bought on sale.",
+    description:
+      "Weighted signals from the games you actually return to — not the ones you bought on sale and never launched.",
     icon: Radar,
-    signal: 94,
-    tone: "citrine",
   },
   {
-    title: "Random Game Picker",
-    description: "Controlled randomness for nights when choosing is the boss fight.",
+    title: "Random Picker",
+    description:
+      "Controlled randomness for nights when choosing is the boss fight. Filters by status and playtime.",
     icon: Dices,
-    signal: 64,
-    tone: "ember",
   },
   {
     title: "Hidden Gems",
-    description: "Low-playtime games that resemble your favorites by genre, tag, and pacing.",
+    description:
+      "Low-playtime games that resemble your favorites by genre, tag, and pacing. Owned but overlooked.",
     icon: Sparkles,
-    signal: 81,
-    tone: "amber",
   },
   {
     title: "Game Carousels",
-    description: "Fast, visual rows for top played, retry picks, and comfort games.",
+    description:
+      "Fast visual rows for top played, retry picks, and comfort games. One glance, full picture.",
     icon: Flame,
-    signal: 76,
-    tone: "violet",
   },
+];
+
+const statPills = [
+  { label: "Games imported", value: "full library" },
+  { label: "Recommendations", value: "explained" },
+  { label: "Session data", value: "server-side only" },
+  { label: "Password required", value: "never" },
 ];
 
 export default async function Home({
@@ -104,125 +76,181 @@ export default async function Home({
   const [params, user] = await Promise.all([searchParams, getCurrentUser()]);
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 py-5 sm:px-6 lg:px-8" id="main-content">
-      <div className="mx-auto max-w-7xl">
-        <nav className="flex items-center justify-between gap-4">
-          <Link className="flex items-center gap-3" href="/">
-            <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-gradient-to-br from-[#b6dfff] to-[#2a87d4] text-[#06121f] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-4px_rgba(93,184,255,0.5)]">
-              <MapIcon className="h-4.5 w-4.5" strokeWidth={2.4} />
-            </span>
-            <span className="leading-tight">
-              <span className="block text-[14px] font-semibold tracking-tight text-[var(--foreground)]">Steam Atlas</span>
-              <span className="hidden text-[11px] text-[var(--muted)] sm:block">Library intelligence</span>
-            </span>
-          </Link>
+    <main className="relative overflow-hidden" id="main-content">
+      <SpatialBackgroundClient />
+
+      {/* ── Nav ── */}
+      <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+        <Link className="flex items-center gap-2.5" href="/">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[var(--radius-sm)] bg-[var(--brand)] text-[oklch(7.5%_0.008_52)] shadow-[0_4px_12px_-4px_oklch(73%_0.17_72/50%)]">
+            <MapIcon className="h-4 w-4" strokeWidth={2.6} />
+          </span>
+          <span className="text-[14px] font-semibold tracking-tight text-[var(--foreground)]">
+            Steam Atlas
+          </span>
+        </Link>
+
+        <div className="flex items-center gap-3">
+          <span className="hidden text-[12px] text-[var(--muted)] sm:block">Library intelligence</span>
           {user ? (
-            <a className={cn(buttonClassName("secondary", "md"))} href="/dashboard">
-              Open dashboard
-              <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
+            <a className={cn(buttonClassName("primary", "sm"))} href="/dashboard">
+              Dashboard
+              <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.3} />
             </a>
           ) : (
             <SteamLoginButton className="hidden sm:inline-flex" />
           )}
-        </nav>
+        </div>
+      </header>
 
-        {params.auth_error ? (
-          <div className="mt-6 rounded-[12px] border border-[rgba(255,138,92,0.32)] bg-[rgba(255,138,92,0.08)] p-4 text-sm text-[#ffd1b8]">
+      {params.auth_error ? (
+        <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="rounded-[var(--radius-md)] border border-[oklch(70%_0.145_38/30%)] bg-[oklch(70%_0.145_38/8%)] p-4 text-[13px] text-[oklch(82%_0.07_38)]">
             {params.auth_error}
           </div>
-        ) : null}
+        </div>
+      ) : null}
 
-        <section className="grid min-h-[calc(100vh-5rem)] items-center gap-12 py-14 lg:grid-cols-[0.95fr_1.05fr]">
-          <div>
-            <Badge variant="amber">
-              <Eye className="h-3 w-3" />
-              Steam OpenID · server-side API
-            </Badge>
-            <h1 className="mt-6 max-w-3xl text-[44px] font-semibold leading-[1.04] tracking-tight text-[var(--foreground)] sm:text-[56px] lg:text-[64px]">
-              Your Steam backlog,
-              <br />
-              <span className="bg-gradient-to-r from-[#b6dfff] via-[#5db8ff] to-[#ff8a5c] bg-clip-text text-transparent">
-                turned into a decision engine.
-              </span>
-            </h1>
-            <p className="mt-6 max-w-2xl text-[17px] leading-7 text-[var(--muted-strong)]">
-              Steam Atlas reads the shape of your library and turns it into a calm command center —
-              taste signals, backlog gems, retry picks, comfort games, and a next-play recommendation
-              that actually explains itself.
+      {/* ── Hero ── */}
+      <section className="relative z-10 px-5 pb-16 pt-16 sm:px-8 sm:pt-24 lg:pt-32">
+        <div className="mx-auto max-w-7xl">
+
+          <p className="mono-label mb-6 text-[var(--brand)] opacity-70">
+            / Steam library intelligence
+          </p>
+
+          <h1 className="max-w-5xl text-[clamp(2.75rem,7vw,6rem)] font-semibold leading-[0.98] tracking-[-0.03em] text-[var(--foreground)]">
+            Your backlog
+            <br />
+            has a&nbsp;
+            <span className="text-[var(--brand)]">shape.</span>
+          </h1>
+
+          <div className="mt-8 max-w-2xl">
+            <p className="text-[clamp(1rem,1.8vw,1.2rem)] leading-[1.6] text-[var(--muted-strong)]">
+              Steam Atlas reads how you actually play — playtime, recency, genre overlap,
+              and forgotten shelf games — then surfaces a recommendation that explains itself.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            {user ? (
+              <a className={cn(buttonClassName("primary", "lg"))} href="/dashboard">
+                Open dashboard
+                <ArrowRight className="h-5 w-5" strokeWidth={2.2} />
+              </a>
+            ) : (
+              <SteamLoginButton />
+            )}
+            <a
+              className={cn(
+                buttonClassName("secondary", "lg"),
+                "border border-[var(--line-strong)] bg-transparent text-[var(--muted-strong)] hover:border-[oklch(73%_0.17_72/35%)] hover:bg-[var(--brand-dim)] hover:text-[var(--foreground)]",
+              )}
+              href="#features"
+            >
+              How it works
+            </a>
+          </div>
+
+          <div className="mt-7 flex items-start gap-2 text-[12px] leading-5 text-[var(--muted)]">
+            <LockKeyhole className="mt-0.5 h-3 w-3 shrink-0 text-[var(--citrine)]" strokeWidth={2.2} />
+            <span>
+              Steam login returns only a SteamID64. No password, no tokens stored, API key stays server-side.
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stat pills ── */}
+      <div className="relative z-10 border-y border-[var(--line)] bg-[var(--surface)]">
+        <div className="mx-auto flex max-w-7xl items-center gap-0 overflow-x-auto px-5 sm:px-8">
+          {statPills.map((pill, i) => (
+            <div
+              key={pill.label}
+              className={cn(
+                "flex shrink-0 items-center gap-3 py-3.5 pr-8",
+                i > 0 && "border-l border-[var(--line)] pl-8",
+              )}
+            >
+              <span className="mono-label shrink-0">{pill.label}</span>
+              <span className="text-[13px] font-semibold text-[var(--brand)]">{pill.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Full-width showcase ── */}
+      <div className="relative z-10 border-b border-[var(--line)]">
+        <LandingShowcase />
+      </div>
+
+      {/* ── Feature catalog ── */}
+      <section className="relative z-10 px-5 py-20 sm:px-8 lg:py-28" id="features">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 flex flex-col gap-3 border-b border-[var(--line)] pb-10 sm:flex-row sm:items-end sm:justify-between">
+            <h2 className="text-[clamp(1.5rem,3.5vw,2.5rem)] font-semibold tracking-tight text-[var(--foreground)]">
+              Everything in the atlas.
+            </h2>
+            <p className="max-w-[40ch] text-[14px] leading-6 text-[var(--muted)] sm:text-right">
+              Six views into your library. Each explains its own output.
+            </p>
+          </div>
+
+          <div className="grid gap-px bg-[var(--line)] sm:grid-cols-2 lg:grid-cols-3">
+            {featureItems.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={feature.title}
+                  className="group relative bg-[var(--background)] p-8 transition-colors hover:bg-[var(--surface)]"
+                >
+                  <div className="mb-6 flex items-start justify-between">
+                    <span className="mono-label text-[var(--brand)] opacity-50">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <Icon
+                      className="h-[18px] w-[18px] text-[var(--muted)] transition-colors duration-200 group-hover:text-[var(--brand)]"
+                      strokeWidth={1.8}
+                    />
+                  </div>
+                  <h3 className="text-[17px] font-semibold tracking-tight text-[var(--foreground)]">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-3 text-[14px] leading-[1.7] text-[var(--muted-strong)]">
+                    {feature.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-14 flex flex-col items-center gap-4 text-center">
+            <p className="text-[15px] text-[var(--muted-strong)]">
+              Import takes under a minute. Your library, decoded.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
               {user ? (
                 <a className={cn(buttonClassName("primary", "lg"))} href="/dashboard">
-                  Open dashboard
+                  Open your atlas
                   <ArrowRight className="h-5 w-5" strokeWidth={2.2} />
                 </a>
               ) : (
                 <SteamLoginButton />
               )}
-              <a className={cn(buttonClassName("secondary", "lg"))} href="#features">
-                See features
-              </a>
-            </div>
-            <div className="mt-7 flex items-start gap-2.5 text-[13px] leading-6 text-[var(--muted)]">
-              <LockKeyhole className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--citrine)]" strokeWidth={2.2} />
-              <span>
-                Steam login only identifies your account and returns a SteamID64. This app never asks
-                for your Steam password, and the API key stays on the backend.
-              </span>
             </div>
           </div>
+        </div>
+      </section>
 
-          <LandingShowcase />
-        </section>
-
-        <section className="pb-20" id="features">
-          <div className="mb-8 max-w-2xl">
-            <span className="mono-label">/ features</span>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--foreground)] sm:text-4xl">
-              Built for oversized libraries.
-            </h2>
-            <p className="mt-3 text-[15px] leading-7 text-[var(--muted-strong)]">
-              Steam Atlas focuses on games you already own, caches imports, and explains every
-              recommendation as a read on your actual habits — not a generic score.
-            </p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {featureCards.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <article
-                  className="glass-panel lift-on-hover group relative overflow-hidden p-6 hover:border-[rgba(93,184,255,0.28)]"
-                  key={feature.title}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="icon-crystal" style={toneVars[feature.tone]}>
-                      <Icon className="h-4.5 w-4.5" strokeWidth={2.2} />
-                    </div>
-                    <div className="text-right">
-                      <span className="mono-label">0{index + 1}</span>
-                      <div className="micro-bars mt-2.5 w-12" style={toneVars[feature.tone]}>
-                        {[42, 76, 55, 92, 63].map((height, barIndex) => (
-                          <span
-                            key={`${feature.title}-${barIndex}`}
-                            style={{ height: `${Math.max(18, (height + index * 7) % 100)}%` }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <h3 className="mt-6 text-lg font-semibold tracking-tight text-[var(--foreground)]">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 text-[14px] leading-6 text-[var(--muted-strong)]">{feature.description}</p>
-                  <div className="signal-rail mt-6" style={toneVars[feature.tone]}>
-                    <div className="signal-fill" style={{ width: `${feature.signal}%` }} />
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-      </div>
+      <footer className="relative z-10 border-t border-[var(--line)] px-5 py-6 sm:px-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+          <span className="text-[12px] text-[var(--muted)]">Steam Atlas</span>
+          <span className="text-[12px] text-[var(--muted)]">
+            Not affiliated with Valve Corporation.
+          </span>
+        </div>
+      </footer>
     </main>
   );
 }

@@ -1,28 +1,28 @@
-﻿import type { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 export type SignalTone = "amber" | "violet" | "citrine" | "ember";
 
 export const signalToneStyles: Record<SignalTone, CSSProperties> = {
   amber: {
-    "--signal-a": "#5db8ff",
-    "--signal-b": "#ff8a5c",
-    "--signal-c": "#dbe7f2",
+    "--signal-a": "var(--brand)",
+    "--signal-b": "var(--ember)",
+    "--signal-c": "var(--brand-soft)",
   } as CSSProperties,
   violet: {
-    "--signal-a": "#9a8cff",
-    "--signal-b": "#c0b6ff",
-    "--signal-c": "#e2dcff",
+    "--signal-a": "var(--violet)",
+    "--signal-b": "oklch(78% 0.1 280)",
+    "--signal-c": "oklch(84% 0.07 280)",
   } as CSSProperties,
   citrine: {
-    "--signal-a": "#a3e635",
-    "--signal-b": "#5db8ff",
-    "--signal-c": "#f0f6c4",
+    "--signal-a": "var(--citrine)",
+    "--signal-b": "var(--brand)",
+    "--signal-c": "oklch(90% 0.12 127)",
   } as CSSProperties,
   ember: {
-    "--signal-a": "#ff8a5c",
-    "--signal-b": "#5db8ff",
-    "--signal-c": "#ffd1b8",
+    "--signal-a": "var(--ember)",
+    "--signal-b": "var(--brand)",
+    "--signal-c": "oklch(86% 0.08 38)",
   } as CSSProperties,
 };
 

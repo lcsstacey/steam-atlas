@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { Providers } from "@/app/providers";
-import { SpatialBackground } from "@/components/spatial-background";
 import "./globals.css";
 
 const instrument = Instrument_Sans({
@@ -73,8 +72,6 @@ export default function RootLayout({
         <a className="skip-link" href="#main-content">
           Skip to main content
         </a>
-        <SpatialBackground />
-        <div className="aurora-field" aria-hidden="true" />
         <div className="relative z-10">
           <Providers>{children}</Providers>
         </div>

@@ -1,46 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  /* Surface — deep blue-black with subtle teal undertone (Steam Deck OS-inspired) */
-  --background: #07101a;
-  --foreground: #e6eef7;
-  --surface: rgba(16, 25, 36, 0.72);
-  --surface-strong: rgba(20, 31, 44, 0.92);
-  --surface-soft: rgba(180, 210, 240, 0.04);
-  --line: rgba(180, 210, 240, 0.08);
-  --line-strong: rgba(180, 210, 240, 0.14);
-  --muted: #7a8a9c;
-  --muted-strong: #aab8c8;
+  /* ── Warm dark palette ─────────────────────────────────────────────
+     Scene: gaming PC user, 10pm, dim room, warm ambient light.
+     Cold blue-black is the gaming cliché. Warm charcoal is the tool.   */
 
-  /* Brand — Steam blue family, refined for modern UI */
-  --brand: #5db8ff;
-  --brand-soft: #a3d9ff;
-  --brand-deep: #2a87d4;
+  --background:     oklch(7.5% 0.008 52);
+  --foreground:     oklch(93%  0.012 72);
 
-  /* Accents */
-  --ember: #ff8a5c;        /* warm coral, used sparingly for "hot" signals */
-  --citrine: #a3e635;      /* lime-green, used for "active/positive" */
-  --violet: #9a8cff;       /* preserved for variety */
+  --surface:        oklch(11.5% 0.01  50);
+  --surface-strong: oklch(15%   0.01  48);
+  --surface-soft:   oklch(78%   0.015 65 / 4%);
 
-  --shadow-soft: 0 1px 0 rgba(180, 210, 240, 0.05) inset, 0 24px 60px -32px rgba(0, 0, 0, 0.7);
-  --shadow-card: 0 1px 0 rgba(180, 210, 240, 0.06) inset, 0 18px 44px -28px rgba(0, 0, 0, 0.65);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 22px;
+  --line:           oklch(78%   0.015 65 / 8%);
+  --line-strong:    oklch(78%   0.015 65 / 15%);
+
+  --muted:          oklch(56%   0.018 60);
+  --muted-strong:   oklch(72%   0.014 65);
+
+  /* Amber — the committed accent. Replaces Steam blue entirely. */
+  --brand:          oklch(73%   0.17  72);
+  --brand-soft:     oklch(86%   0.1   76);
+  --brand-deep:     oklch(56%   0.15  68);
+  --brand-dim:      oklch(73%   0.17  72 / 12%);
+
+  /* Semantic data accents — not decoration */
+  --ember:          oklch(70%   0.145 38);
+  --citrine:        oklch(84%   0.185 127);
+  --violet:         oklch(68%   0.13  280);
+
+  --shadow-card:    0 1px 0 oklch(78% 0.015 65 / 5%) inset,
+                    0 18px 44px -24px oklch(0% 0 0 / 65%);
+
+  /* Crisper radii — more precise, less bubbly */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  20px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-body-family);
+  --font-sans:    var(--font-body-family);
   --font-display: var(--font-display-family);
-  --font-mono: var(--font-mono-family);
+  --font-mono:    var(--font-mono-family);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html {
   min-height: 100%;
@@ -51,10 +58,10 @@ html {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(80rem 50rem at 12% -10%, rgba(93, 184, 255, 0.08), transparent 60%),
-    radial-gradient(60rem 50rem at 92% 8%, rgba(255, 138, 92, 0.05), transparent 65%),
-    radial-gradient(70rem 60rem at 60% 110%, rgba(154, 140, 255, 0.05), transparent 70%),
-    linear-gradient(180deg, #07101a 0%, #0a1421 55%, #050a11 100%);
+    radial-gradient(80rem 60rem at 10% -15%, oklch(73% 0.17 72 / 5%),  transparent 55%),
+    radial-gradient(60rem 50rem at 94%  5%,  oklch(70% 0.145 38 / 3%), transparent 60%),
+    radial-gradient(70rem 60rem at 55% 105%, oklch(68% 0.13 280 / 3%), transparent 65%),
+    linear-gradient(180deg, oklch(7.5% 0.008 52) 0%, oklch(9% 0.009 50) 55%, oklch(6.5% 0.007 53) 100%);
   color: var(--foreground);
   font-family: var(--font-body-family), -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
   font-feature-settings: "ss01" 1, "ss02" 1, "cv11" 1;
@@ -70,85 +77,46 @@ body {
 h1, h2, h3, .font-display {
   font-family: var(--font-display-family), var(--font-body-family), sans-serif;
   font-feature-settings: "ss01" 1, "ss02" 1, "cv11" 1;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.022em;
   font-weight: 600;
 }
 
-h1 { letter-spacing: -0.024em; }
+h1 { letter-spacing: -0.03em; }
 
-.font-body {
-  font-family: var(--font-body-family), sans-serif;
-}
+.font-body { font-family: var(--font-body-family), sans-serif; }
 
 .mono-label {
   font-family: var(--font-mono-family), ui-monospace, SFMono-Regular, Consolas, monospace;
-  letter-spacing: 0.04em;
-  font-size: 11px;
-  font-weight: 500;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+  font-weight: 600;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button, input, select, textarea {
-  font: inherit;
-}
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; }
 
 ::selection {
-  background: rgba(93, 184, 255, 0.32);
-  color: #07101a;
+  background: oklch(73% 0.17 72 / 28%);
+  color: oklch(7.5% 0.008 52);
 }
 
-/* ────────── Surfaces ────────── */
+/* ────────── Panel surface ────────── */
 
 .glass-panel {
-  position: relative;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background:
-    linear-gradient(180deg, rgba(180, 210, 240, 0.025), rgba(180, 210, 240, 0) 40%),
+    linear-gradient(150deg, oklch(78% 0.015 65 / 3%), transparent 28%),
     var(--surface);
   box-shadow: var(--shadow-card);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
 }
 
-.glass-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background: linear-gradient(180deg, rgba(180, 210, 240, 0.06), transparent 28%);
-  opacity: 0.6;
-}
-
-/* legacy alias — no longer applies clip-path. Just rounds corners. */
-.premium-surface {
-  border-radius: var(--radius-lg);
-}
-
-/* ────────── Glow ring (used for hero/highlight surfaces) ────────── */
-
-.premium-ring {
-  position: relative;
-}
-
-.premium-ring::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(93, 184, 255, 0.45), rgba(255, 138, 92, 0.2) 50%, rgba(154, 140, 255, 0.22));
-  opacity: 0.32;
-  filter: blur(14px);
-  pointer-events: none;
-}
+/* legacy — no visual effect */
+.premium-surface { border-radius: var(--radius-lg); }
+.premium-ring    { }
+.animated-sheen  { position: relative; }
 
 /* ────────── Controls ────────── */
 
@@ -157,103 +125,88 @@ button, input, select, textarea {
   isolation: isolate;
   border-radius: var(--radius-md);
   font-family: var(--font-display-family), var(--font-body-family), sans-serif;
-  font-weight: 540;
-  letter-spacing: -0.005em;
-  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 220ms ease, transform 180ms ease;
+  font-weight: 560;
+  letter-spacing: -0.003em;
+  transition:
+    background-color 160ms ease,
+    border-color     160ms ease,
+    color            160ms ease,
+    box-shadow       200ms ease,
+    transform        140ms ease;
   transform: translateZ(0);
 }
 
 .premium-control:focus-visible {
-  outline: 2px solid rgba(93, 184, 255, 0.7);
+  outline: 2px solid oklch(73% 0.17 72 / 65%);
   outline-offset: 2px;
 }
 
+/* Amber primary button */
 .primary-control,
 .active-control {
-  color: #06121f !important;
+  color: oklch(7.5% 0.008 52) !important;
   background:
-    linear-gradient(180deg, #b6dfff 0%, #5db8ff 60%, #2a87d4 100%) !important;
-  border-color: rgba(182, 223, 255, 0.7) !important;
+    linear-gradient(180deg,
+      oklch(82% 0.14 76) 0%,
+      oklch(73% 0.17 72) 55%,
+      oklch(58% 0.155 68) 100%) !important;
+  border-color: oklch(82% 0.14 76 / 65%) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 rgba(20, 60, 110, 0.22),
-    0 8px 22px -8px rgba(93, 184, 255, 0.5),
-    0 2px 6px rgba(0, 0, 0, 0.35) !important;
+    inset 0 1px 0 oklch(96% 0.06 80 / 55%),
+    inset 0 -1px 0 oklch(56% 0.15 68 / 20%),
+    0 8px 22px -8px oklch(73% 0.17 72 / 44%),
+    0 2px 5px oklch(0% 0 0 / 30%) !important;
   text-shadow: none;
 }
 
 .primary-control:hover,
 .active-control:hover {
   background:
-    linear-gradient(180deg, #c4e5ff 0%, #6ec0ff 60%, #338fdc 100%) !important;
+    linear-gradient(180deg,
+      oklch(85% 0.13 76) 0%,
+      oklch(76% 0.165 72) 55%,
+      oklch(61% 0.15 68) 100%) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(20, 60, 110, 0.22),
-    0 10px 26px -8px rgba(93, 184, 255, 0.6),
-    0 2px 6px rgba(0, 0, 0, 0.35) !important;
+    inset 0 1px 0 oklch(96% 0.06 80 / 60%),
+    inset 0 -1px 0 oklch(56% 0.15 68 / 20%),
+    0 10px 26px -8px oklch(73% 0.17 72 / 54%),
+    0 2px 5px oklch(0% 0 0 / 30%) !important;
 }
 
 .primary-control:active,
-.active-control:active {
-  transform: translateY(1px);
-}
+.active-control:active { transform: translateY(1px); }
 
 .primary-control svg,
 .active-control svg,
-.active-control span {
-  color: inherit !important;
-}
+.active-control span { color: inherit !important; }
 
-/* ────────── Cards (game art) ────────── */
-
-.game-card-shell {
-  position: relative;
-  border-radius: var(--radius-lg);
-}
-
-.game-card-art {
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
-  overflow: hidden;
-}
-
-/* ────────── Icon "crystal" — refined to a clean tinted square ────────── */
+/* ────────── Icon container ────────── */
 
 .icon-crystal {
   --signal-a: var(--brand);
-  --signal-b: var(--ember);
-  --signal-c: var(--citrine);
   position: relative;
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--signal-a) 26%, transparent);
-  background:
-    radial-gradient(circle at 30% 22%, color-mix(in srgb, var(--signal-a) 22%, transparent), transparent 60%),
-    linear-gradient(160deg, rgba(180, 210, 240, 0.06), rgba(180, 210, 240, 0.02));
-  box-shadow:
-    inset 0 1px 0 rgba(180, 210, 240, 0.12),
-    0 4px 14px -6px color-mix(in srgb, var(--signal-a) 28%, transparent);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in oklch, var(--signal-a) 20%, transparent);
+  background: color-mix(in oklch, var(--signal-a) 10%, transparent);
   color: var(--foreground);
 }
 
-.icon-crystal svg {
-  color: color-mix(in srgb, var(--signal-a) 88%, white);
-}
+.icon-crystal svg { color: color-mix(in oklch, var(--signal-a) 85%, white); }
 
-/* ────────── Signal meter (clean bar, no scanlines) ────────── */
+/* ────────── Signal meter ────────── */
 
 .signal-rail {
   --signal-a: var(--brand);
   --signal-b: var(--ember);
-  --signal-c: var(--citrine);
   position: relative;
-  height: 6px;
+  height: 3px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(180, 210, 240, 0.06);
-  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.3);
+  background: oklch(78% 0.015 65 / 8%);
 }
 
 .signal-fill {
@@ -261,81 +214,53 @@ button, input, select, textarea {
   height: 100%;
   min-width: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--signal-a), color-mix(in srgb, var(--signal-b) 70%, var(--signal-a)));
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--signal-a) 35%, transparent),
-    0 0 18px -2px color-mix(in srgb, var(--signal-a) 50%, transparent);
+  background: linear-gradient(90deg, var(--signal-a), color-mix(in oklch, var(--signal-b) 60%, var(--signal-a)));
+  box-shadow: 0 0 8px -1px color-mix(in oklch, var(--signal-a) 40%, transparent);
 }
 
-.signal-stack {
-  display: grid;
-  gap: 4px;
-}
+.signal-stack { display: grid; gap: 3px; }
 
-/* ────────── Micro bars (mini sparklines) ────────── */
+/* ────────── Micro bars ────────── */
 
 .micro-bars {
   align-items: end;
   display: flex;
-  gap: 3px;
-  height: 26px;
+  gap: 2px;
+  height: 22px;
 }
 
 .micro-bars span {
-  background: linear-gradient(180deg, var(--signal-c, #c4e5ff), var(--signal-a, #5db8ff) 60%, var(--signal-b, #ff8a5c));
+  background: linear-gradient(180deg,
+    var(--signal-c, oklch(86% 0.1 76)),
+    var(--signal-a, oklch(73% 0.17 72)) 55%);
   border-radius: 1.5px;
   flex: 1;
   min-width: 3px;
-  opacity: 0.78;
+  opacity: 0.7;
 }
 
-/* ────────── Ambient layers (quieted) ────────── */
-
-.animated-sheen {
-  /* deliberately a no-op — kept for backward compat with existing markup */
-  position: relative;
-}
+/* ────────── Ambient grid ────────── */
 
 .ambient-grid {
   background-image:
-    linear-gradient(rgba(180, 210, 240, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(180, 210, 240, 0.03) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    linear-gradient(oklch(78% 0.015 65 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(78% 0.015 65 / 3%) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 25%, transparent 78%);
 }
 
-.aurora-field {
-  position: fixed;
-  inset: -10%;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.22;
-  filter: blur(60px);
-  background:
-    radial-gradient(40rem 30rem at 18% 22%, rgba(93, 184, 255, 0.55), transparent 70%),
-    radial-gradient(36rem 30rem at 84% 12%, rgba(255, 138, 92, 0.3), transparent 70%),
-    radial-gradient(40rem 36rem at 60% 88%, rgba(154, 140, 255, 0.32), transparent 70%);
-  animation: aurora-drift 32s ease-in-out infinite alternate;
-}
+/* ────────── Three.js landing canvas ────────── */
 
 .spatial-canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.35;
   mix-blend-mode: screen;
 }
 
-.hide-scrollbar {
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* ────────── Skip link (a11y) ────────── */
+/* ────────── Skip link ────────── */
 
 .skip-link {
   position: fixed;
@@ -344,68 +269,65 @@ button, input, select, textarea {
   z-index: 100;
   transform: translate(-50%, -120%);
   padding: 10px 16px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #b6dfff, #5db8ff 80%);
-  color: #06121f;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, oklch(82% 0.14 76), oklch(73% 0.17 72) 80%);
+  color: oklch(7.5% 0.008 52);
   font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 8px 24px -10px rgba(93, 184, 255, 0.6);
+  box-shadow: 0 8px 24px -10px oklch(73% 0.17 72 / 52%);
   transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .skip-link:focus {
   transform: translate(-50%, 12px);
-  outline: 2px solid rgba(93, 184, 255, 0.8);
+  outline: 2px solid oklch(73% 0.17 72 / 75%);
   outline-offset: 3px;
 }
 
-/* ────────── Subtle hover lift utility ────────── */
+/* ────────── Utilities ────────── */
 
 .lift-on-hover {
-  transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 280ms ease, border-color 280ms ease;
+  transition:
+    transform    240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow   240ms ease,
+    border-color 240ms ease;
 }
+.lift-on-hover:hover { transform: translateY(-2px); }
 
-.lift-on-hover:hover {
-  transform: translateY(-2px);
-}
+.hide-scrollbar              { scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
 
-/* ────────── Animations ────────── */
+/* ────────── Skeleton shimmer ────────── */
 
-@keyframes aurora-drift {
-  from { transform: translate3d(-2%, -1%, 0) scale(1); }
-  to { transform: translate3d(2%, 1.5%, 0) scale(1.04); }
-}
-
-@keyframes signal-pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
-@keyframes shimmer {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
-}
-
-.shimmer-line {
-  position: relative;
-  overflow: hidden;
-}
+.shimmer-line { position: relative; overflow: hidden; }
 
 .shimmer-line::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(180, 210, 240, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, oklch(78% 0.015 65 / 7%), transparent);
   animation: shimmer 1.8s ease-in-out infinite;
   pointer-events: none;
+}
+
+/* ────────── Animations ────────── */
+
+@keyframes signal-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
 }
 
 /* ────────── Reduced motion ────────── */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1     !important;
+    transition-duration:       0.01ms !important;
   }
 }

@@ -26,8 +26,6 @@ export function CommandCenterHero({
   return (
     <section className="glass-panel premium-ring relative overflow-hidden p-6 lg:p-8">
       <div className="pointer-events-none absolute inset-0 ambient-grid opacity-40" />
-      <div className="pointer-events-none absolute -right-32 -top-32 h-72 w-72 rounded-full bg-[rgba(93,184,255,0.14)] blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 left-1/4 h-72 w-72 rounded-full bg-[rgba(154,140,255,0.1)] blur-3xl" />
 
       <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="min-w-0">
@@ -38,7 +36,7 @@ export function CommandCenterHero({
           <h2 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight text-[var(--foreground)] lg:text-5xl">
             Your library has a signal.
             <br />
-            <span className="bg-gradient-to-r from-[#b6dfff] via-[#5db8ff] to-[#ff8a5c] bg-clip-text text-transparent">
+            <span className="text-[var(--brand)]">
               Steam Atlas found the next move.
             </span>
           </h2>

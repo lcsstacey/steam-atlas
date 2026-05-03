@@ -2,158 +2,195 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { motion } from "framer-motion";
-import { Activity, Play, Sparkles } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { SignalMeter, type SignalTone, signalToneStyles } from "@/components/ui/signal-meter";
+import { Activity, CheckCircle2, Clock, Play, Sparkles } from "lucide-react";
 
-const mockGames = [
+const games = [
   {
     name: "Hollow Knight",
     url: "https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg",
     hours: "2.4h",
+    status: "Unplayed",
     score: 94,
-    tone: "amber",
+    match: "Precise action",
   },
   {
     name: "Hades",
     url: "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg",
     hours: "58h",
+    status: "Comfort game",
     score: 88,
-    tone: "ember",
+    match: "High replay",
   },
   {
     name: "Stardew Valley",
     url: "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg",
     hours: "141h",
+    status: "All time",
     score: 82,
-    tone: "citrine",
+    match: "Loop mastery",
   },
   {
     name: "Celeste",
     url: "https://cdn.cloudflare.steamstatic.com/steam/apps/504230/header.jpg",
     hours: "0h",
+    status: "Backlog gem",
     score: 79,
-    tone: "violet",
+    match: "Taste overlap",
+  },
+  {
+    name: "Disco Elysium",
+    url: "https://cdn.cloudflare.steamstatic.com/steam/apps/632470/header.jpg",
+    hours: "12h",
+    status: "In progress",
+    score: 91,
+    match: "Narrative depth",
   },
 ];
 
 export function LandingShowcase() {
   return (
-    <motion.section
-      className="glass-panel premium-ring relative overflow-hidden p-5"
-      initial={{ opacity: 0, y: 24, scale: 0.99 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-    >
-      <div className="relative rounded-[14px] border border-[var(--line)] bg-[#06101a]/85 p-5">
-        <div className="pointer-events-none absolute inset-0 ambient-grid opacity-30" />
-        <div className="pointer-events-none absolute -right-16 -top-20 h-44 w-44 rounded-full bg-[rgba(93,184,255,0.12)] blur-3xl" />
+    <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
+      <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
 
-        <div className="relative flex items-start justify-between gap-4">
-          <div>
-            <span className="mono-label">library signal</span>
-            <h2 className="mt-2 text-[22px] font-semibold tracking-tight text-[var(--foreground)]">
-              Tonight&apos;s shortlist
-            </h2>
+        {/* Left: game cards */}
+        <div className="overflow-hidden">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="mono-label">/ tonight&apos;s shortlist</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[oklch(73%_0.17_72/25%)] bg-[oklch(73%_0.17_72/8%)] px-2.5 py-1 text-[11px] font-medium text-[var(--brand-soft)]">
+              Preview
+            </span>
           </div>
-          <Badge variant="amber">Preview</Badge>
-        </div>
 
-        <div className="relative mt-5 grid gap-3 sm:grid-cols-3">
-          {[
-            ["Games", "612", "from Steam API"],
-            ["Never played", "188", "backlog pressure"],
-            ["Total hours", "4,920", "taste signal"],
-          ].map(([label, value, detail], index) => (
+          {/* Horizontal scroll of game cards */}
+          <div className="relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--line)]">
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[var(--background)] to-transparent" />
             <motion.div
-              className="rounded-[12px] border border-[var(--line)] bg-white/[0.03] p-3.5"
-              key={label}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.18 + index * 0.06 }}
+              animate={{ x: [0, -240, 0] }}
+              className="flex gap-0"
+              transition={{ duration: 20, ease: "easeInOut", repeat: Infinity }}
             >
-              <p className="mono-label">{label}</p>
-              <p className="mt-2 text-[22px] font-semibold tracking-tight text-[var(--foreground)]">{value}</p>
-              <p className="mt-0.5 text-[11px] text-[var(--muted)]">{detail}</p>
-              <SignalMeter
-                className="mt-3"
-                tone={index === 0 ? "amber" : index === 1 ? "violet" : "citrine"}
-                value={index === 0 ? 82 : index === 1 ? 58 : 94}
-              />
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="relative mt-5 overflow-hidden">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#06101a] to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[#06101a] to-transparent" />
-          <motion.div
-            animate={{ x: [0, -200, 0] }}
-            className="flex w-max gap-3"
-            transition={{ duration: 16, ease: "easeInOut", repeat: Infinity }}
-          >
-            {[...mockGames, ...mockGames].map((game, index) => (
-              <div
-                className="w-48 overflow-hidden rounded-[12px] border border-[var(--line)] bg-white/[0.03]"
-                key={`${game.name}-${index}`}
-              >
-                <div className="relative h-24 overflow-hidden">
-                  <img
-                    alt=""
-                    className="h-full w-full object-cover"
-                    decoding="async"
-                    loading="lazy"
-                    src={game.url}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  <Badge className="absolute bottom-2 left-2" variant={game.hours === "0h" ? "amber" : "teal"}>
-                    {game.hours}
-                  </Badge>
-                </div>
-                <div className="p-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-[13px] font-semibold text-[var(--foreground)]">{game.name}</span>
-                    <span className="mono-label" style={{ color: "var(--brand)" }}>{game.score}</span>
+              {[...games, ...games].map((game, i) => (
+                <div
+                  key={`${game.name}-${i}`}
+                  className="relative w-48 shrink-0 border-r border-[var(--line)] last:border-r-0"
+                >
+                  <div className="relative h-28 overflow-hidden">
+                    <img
+                      alt=""
+                      className="h-full w-full object-cover"
+                      decoding="async"
+                      loading="lazy"
+                      src={game.url}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-black/30 to-transparent" />
+                    <div className="absolute bottom-2.5 left-3 right-3">
+                      <span className="mono-label text-[var(--brand)] opacity-75">{game.match}</span>
+                    </div>
                   </div>
-                  <SignalMeter className="mt-3" tone={game.tone as SignalTone} value={game.score} />
+                  <div className="p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-[13px] font-semibold leading-tight text-[var(--foreground)]">
+                        {game.name}
+                      </span>
+                      <span className="mt-0.5 shrink-0 text-[11px] font-semibold text-[var(--brand)]">
+                        {game.score}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <Clock className="h-3 w-3 text-[var(--muted)]" strokeWidth={2} />
+                      <span className="text-[11px] text-[var(--muted)]">{game.hours}</span>
+                      <span className="ml-1 text-[11px] text-[var(--muted-strong)]">{game.status}</span>
+                    </div>
+                    {/* slim signal bar */}
+                    <div className="signal-rail mt-3">
+                      <div className="signal-fill" style={{ width: `${game.score}%` }} />
+                    </div>
+                  </div>
                 </div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Stat row */}
+          <div className="mt-4 grid grid-cols-3 gap-3">
+            {[
+              { label: "Library", value: "612 games" },
+              { label: "Never played", value: "188" },
+              { label: "Hours logged", value: "4,920" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-[var(--radius-md)] border border-[var(--line)] bg-[var(--surface)] px-4 py-3"
+              >
+                <span className="mono-label block">{stat.label}</span>
+                <span className="mt-1.5 block text-[18px] font-semibold tracking-tight text-[var(--foreground)]">
+                  {stat.value}
+                </span>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
+        {/* Right: recommendation card */}
         <motion.div
-          className="relative mt-5 rounded-[14px] border border-[rgba(93,184,255,0.28)] bg-[rgba(93,184,255,0.07)] p-4"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
+          className="flex flex-col"
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
         >
-          <div className="flex items-center gap-2 text-[13px] font-medium text-[#a3d9ff]">
-            <Sparkles className="h-3.5 w-3.5" strokeWidth={2.4} />
-            Personal read
-          </div>
-          <p className="mt-2 text-[14px] leading-6 text-[var(--muted-strong)]">
-            Try Hollow Knight tonight. Your library says you stick with precise action games, and
-            this one is still in the sweet spot between familiar and neglected.
-          </p>
-          <div className="mt-3 flex items-center gap-3 text-[12px] text-[var(--muted)]">
-            <span className="inline-flex items-center gap-1.5">
-              <Activity className="h-3 w-3 text-[var(--citrine)]" strokeWidth={2.4} />
-              Taste 94
-            </span>
-            <span className="text-[var(--line-strong)]">·</span>
-            <span className="inline-flex items-center gap-1.5">
-              <Play className="h-3 w-3 text-[var(--brand)]" strokeWidth={2.4} />
-              Low commitment
-            </span>
-          </div>
-          <div className="micro-bars absolute right-4 top-4 w-14" style={signalToneStyles.amber}>
-            {[35, 78, 52, 92, 46, 68].map((height, index) => (
-              <span key={`${height}-${index}`} style={{ height: `${height}%` }} />
-            ))}
+          <span className="mono-label mb-4">/ next play</span>
+
+          {/* Hero game art */}
+          <div className="relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--line)]">
+            <div className="relative h-44 overflow-hidden">
+              <img
+                alt="Hollow Knight"
+                className="h-full w-full object-cover"
+                decoding="async"
+                loading="lazy"
+                src="https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--surface)] via-black/20 to-transparent" />
+              <div className="absolute bottom-3 left-3">
+                <span className="text-[13px] font-semibold text-[var(--foreground)]">Hollow Knight</span>
+              </div>
+              <div className="absolute right-3 top-3">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[oklch(73%_0.17_72/90%)] px-2.5 py-1 text-[11px] font-semibold text-[oklch(7.5%_0.008_52)]">
+                  <Play className="h-2.5 w-2.5" strokeWidth={2.5} />
+                  Tonight
+                </span>
+              </div>
+            </div>
+
+            <div className="p-4">
+              <div className="flex items-center gap-1.5 text-[12px] font-medium text-[var(--brand-soft)]">
+                <Sparkles className="h-3 w-3" strokeWidth={2.2} />
+                Personal read
+              </div>
+              <p className="mt-2 text-[13px] leading-[1.6] text-[var(--muted-strong)]">
+                Your library says you stick with precise action games. This one is still in
+                the sweet spot between familiar and neglected.
+              </p>
+
+              <div className="mt-4 space-y-2 border-t border-[var(--line)] pt-4">
+                {[
+                  { icon: Activity, label: "Taste match", value: "94 / 100" },
+                  { icon: Clock,    label: "Playtime",     value: "2.4h" },
+                  { icon: CheckCircle2, label: "Status",   value: "In backlog" },
+                ].map(({ icon: Icon, label, value }) => (
+                  <div key={label} className="flex items-center justify-between text-[12px]">
+                    <span className="flex items-center gap-1.5 text-[var(--muted)]">
+                      <Icon className="h-3 w-3" strokeWidth={2} />
+                      {label}
+                    </span>
+                    <span className="font-medium text-[var(--foreground)]">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
-    </motion.section>
+    </div>
   );
 }
